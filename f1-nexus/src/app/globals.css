@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #e00700;
+  --color-background-light: #f8f5f5;
+  --color-background-dark: #0B0B0B;
+  --color-card-dark: #111111;
+  --color-panel-dark: #1a1a1a;
+  --color-border-dark: #222222;
+  --color-border-accent: #333333;
+  --color-neutral-dark: #1c1c1c;
+
+  /* Official F1 team colors */
+  --color-ferrari: #E80020;
+  --color-redbull: #3671C6;
+  --color-mercedes: #27F4D2;
+  --color-mclaren: #FF8000;
+  --color-aston: #229971;
+  --color-alpine: #0093CC;
+  --color-williams: #64C4FF;
+  --color-rb: #6692FF;
+  --color-sauber: #00E701;
+  --color-haas: #B6BABD;
+
+  --font-display: "Inter", sans-serif;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-display);
+  background: var(--color-background-dark);
+  color: #e2e8f0;
+  min-height: 100dvh;
+}
+
+/* ── Custom Scrollbar ────────────────────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #e00700;
+}
+
+/* ── Carbon Fiber Pattern ───────────────────────────────────────── */
+.carbon-pattern {
+  background-image: radial-gradient(rgba(255,255,255,0.03) 0.5px, transparent 0.5px);
+  background-size: 10px 10px;
+}
+
+.carbon-texture {
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+                    linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%),
+                    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
+  background-size: 4px 4px;
+}
+
+.blueprint-grid {
+  background-image: radial-gradient(circle, rgba(224, 7, 0, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Glass Panels ───────────────────────────────────────────────── */
+.glass-panel {
+  background: rgba(17, 17, 17, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.f1-glass {
+  background: linear-gradient(135deg, rgba(25, 25, 25, 0.9) 0%, rgba(10, 10, 10, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ── Glow Effects ───────────────────────────────────────────────── */
+.glow-red {
+  box-shadow: 0 0 20px rgba(224, 7, 0, 0.4), 0 0 60px rgba(224, 7, 0, 0.1);
+}
+
+.glow-red-sm {
+  box-shadow: 0 0 10px rgba(224, 7, 0, 0.3);
+}
+
+.f1-glow:hover {
+  box-shadow: 0 0 20px rgba(224, 7, 0, 0.25);
+  transition: box-shadow 0.3s ease;
+}
+
+.chart-bar-glow {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* ── Gradient Text ──────────────────────────────────────────────── */
+.gradient-text-red {
+  background: linear-gradient(135deg, #ff4444, #e00700, #990000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(224,7,0,0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 20px rgba(224,7,0,0.8); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scan-line {
+  0% { top: -2px; }
+  100% { top: 100%; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* ── Lap time font ──────────────────────────────────────────────── */
+.font-mono-f1 {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}

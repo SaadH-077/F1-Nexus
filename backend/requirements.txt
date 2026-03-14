@@ -1,0 +1,12 @@
+fastapi>=0.109.2
+uvicorn>=0.27.1
+sqlalchemy>=2.0.25
+httpx>=0.26.0
+pydantic>=2.6.1
+pydantic-settings>=2.1.0
+fastf1>=3.8.1
+xgboost>=2.0.3
+scikit-learn>=1.4.0
+pandas>=2.2.0
+numpy>=1.26.4
+ollama>=0.1.6

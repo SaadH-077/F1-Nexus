@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# FastF1 cache & data
+data/cache/
+
+# Database (dev)
+*.db
+*.sqlite3
+
+# Environment secrets
+.env
+
+# Pyright / type-checker
+pyrightconfig.json
+
+# OS
+.DS_Store
+Thumbs.db
