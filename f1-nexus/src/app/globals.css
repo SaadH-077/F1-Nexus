@@ -76,7 +76,9 @@
 .animate-ping.bg-primary { background-color: #e00700 !important; }
 
 html {
-  color-scheme: dark;
+  /* "only dark" blocks Samsung Internet / Chrome auto dark mode from
+     recoloring any element on the page — prevents reds shifting to pink */
+  color-scheme: only dark;
   scroll-behavior: smooth;
 }
 

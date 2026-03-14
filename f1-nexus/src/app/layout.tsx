@@ -45,6 +45,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        {/* Prevent Samsung/Chrome from auto-applying dark mode transformations
+            that desaturate and shift reds to pink. "only dark" means:
+            this page is already dark — do NOT recolor anything. */}
+        <meta name="color-scheme" content="dark" />
+        <meta name="supported-color-schemes" content="dark" />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
