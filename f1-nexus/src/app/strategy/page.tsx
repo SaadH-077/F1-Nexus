@@ -58,7 +58,7 @@ const TRACKS = [
 
 const COMPOUNDS = [
   {
-    label: "S", key: "Soft",   color: "#ff1500", text: "#fff",
+    label: "S", key: "Soft",   color: "#e00700", text: "#fff",
     fullName: "P Zero Soft",  maxLife: "12–20L", degRate: "0.07–0.10s/lap",
     desc: "Maximum grip, fastest degradation. Short stints only.",
   },
@@ -418,7 +418,7 @@ export default function StrategyPage() {
                           }`}
                         >
                           <span className="material-symbols-outlined text-[14px] flex-shrink-0"
-                            style={{ color: active ? "#ff1500" : "#475569" }}>{f.icon}</span>
+                            style={{ color: active ? "#e00700" : "#475569" }}>{f.icon}</span>
                           <div className="flex-1 min-w-0">
                             <p className={`text-[10px] font-black uppercase leading-tight ${active ? "text-white" : "text-slate-500"}`}>
                               {f.label}
@@ -470,9 +470,9 @@ export default function StrategyPage() {
             <div className="flex items-center gap-3">
               <span className="text-[9px] font-black px-2 py-0.5 rounded-full border"
                 style={{
-                  color: result.confidence === "High" ? "#34d399" : result.confidence === "Medium" ? "#eab308" : "#ff1500",
-                  borderColor: result.confidence === "High" ? "#34d399" + "40" : result.confidence === "Medium" ? "#eab308" + "40" : "#ff1500" + "40",
-                  background: result.confidence === "High" ? "#34d39915" : result.confidence === "Medium" ? "#eab30815" : "#ff150015",
+                  color: result.confidence === "High" ? "#34d399" : result.confidence === "Medium" ? "#eab308" : "#e00700",
+                  borderColor: result.confidence === "High" ? "#34d399" + "40" : result.confidence === "Medium" ? "#eab308" + "40" : "#e00700" + "40",
+                  background: result.confidence === "High" ? "#34d39915" : result.confidence === "Medium" ? "#eab30815" : "#e0070015",
                 }}>
                 {result.confidence} confidence
               </span>
@@ -503,7 +503,7 @@ export default function StrategyPage() {
                             <div className="flex items-center gap-1.5">
                               <div className="w-6 h-px bg-primary/30" />
                               <div className="px-2 py-1 rounded-lg border text-[8px] font-black whitespace-nowrap"
-                                style={{ background: "rgba(255,21,0,0.1)", borderColor: "rgba(255,21,0,0.3)", color: "#ff1500" }}>
+                                style={{ background: "rgba(224,7,0,0.1)", borderColor: "rgba(224,7,0,0.3)", color: "#e00700" }}>
                                 PIT L{s.startLap}
                               </div>
                               <div className="w-6 h-px bg-primary/30" />
@@ -596,9 +596,9 @@ export default function StrategyPage() {
                       <path d={svgPath} fill="none" stroke={driverColor} strokeWidth="2.5" filter="url(#dGlow)" />
                       {pitMarkers.map((p, i) => (
                         <g key={i}>
-                          <line x1={p.x} y1="0" x2={p.x} y2="160" stroke="#ff1500" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.7" />
-                          <rect x={p.x - 14} y="4" width="30" height="14" rx="3" fill="rgba(255,21,0,0.2)" />
-                          <text x={p.x + 1} y="14" fill="#ff1500" fontSize="9" fontWeight="900" textAnchor="middle">PIT</text>
+                          <line x1={p.x} y1="0" x2={p.x} y2="160" stroke="#e00700" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.7" />
+                          <rect x={p.x - 14} y="4" width="30" height="14" rx="3" fill="rgba(224,7,0,0.2)" />
+                          <text x={p.x + 1} y="14" fill="#e00700" fontSize="9" fontWeight="900" textAnchor="middle">PIT</text>
                         </g>
                       ))}
                     </svg>
@@ -704,7 +704,7 @@ export default function StrategyPage() {
               {[
                 { level: "High",   color: "#34d399", icon: "verified",  cond: "≥60% of 1 000 simulations agree on the same pit lap. Low variance across SC and degradation draws." },
                 { level: "Medium", color: "#eab308", icon: "warning",   cond: "40–59% agreement. Some divergence driven by SC probability or compound sensitivity at this circuit." },
-                { level: "Low",    color: "#ff1500", icon: "error",     cond: "<40% agreement. Multiple viable strategy variants exist — treat as directional guidance only." },
+                { level: "Low",    color: "#e00700", icon: "error",     cond: "<40% agreement. Multiple viable strategy variants exist — treat as directional guidance only." },
               ].map((cl) => (
                 <div key={cl.level} className="flex items-start gap-3 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
                   <span className="material-symbols-outlined text-xl flex-shrink-0 mt-0.5" style={{ color: cl.color }}>{cl.icon}</span>

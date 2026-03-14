@@ -28,7 +28,7 @@ export default function SplashScreen() {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div
           className="w-96 h-96 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #ff1500 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #e00700 0%, transparent 70%)" }}
         />
       </div>
 
@@ -38,7 +38,7 @@ export default function SplashScreen() {
         <div className="relative">
           <div
             className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center"
-            style={{ boxShadow: "0 0 40px rgba(255,21,0,0.5), 0 0 80px rgba(255,21,0,0.2)" }}
+            style={{ boxShadow: "0 0 40px rgba(224,7,0,0.5), 0 0 80px rgba(224,7,0,0.2)" }}
           >
             <span
               className="material-symbols-outlined text-white text-4xl"
@@ -52,7 +52,7 @@ export default function SplashScreen() {
           {/* Pulse rings */}
           <div
             className="absolute inset-0 rounded-2xl animate-ping"
-            style={{ border: "1px solid rgba(255,21,0,0.4)", animationDuration: "1.5s" }}
+            style={{ border: "1px solid rgba(224,7,0,0.4)", animationDuration: "1.5s" }}
           />
         </div>
 

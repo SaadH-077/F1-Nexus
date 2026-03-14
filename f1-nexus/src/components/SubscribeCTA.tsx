@@ -9,7 +9,7 @@ export default function SubscribeCTA() {
       <button
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all"
-        style={{ boxShadow: "0 0 24px rgba(255,21,0,0.35)" }}
+        style={{ boxShadow: "0 0 24px rgba(224,7,0,0.35)" }}
       >
         <span className="material-symbols-outlined text-base">notifications_active</span>
         Subscribe for Reminders
