@@ -48,6 +48,11 @@ app.include_router(races.router, prefix=settings.API_V1_STR)
 app.include_router(telemetry.router, prefix=settings.API_V1_STR)
 app.include_router(strategy.router, prefix=settings.API_V1_STR)
 app.include_router(predictor.router, prefix=settings.API_V1_STR)
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
 app.include_router(analyst.router, prefix=settings.API_V1_STR)
 app.include_router(news.router, prefix=settings.API_V1_STR)
 app.include_router(subscribers.router, prefix=settings.API_V1_STR)
