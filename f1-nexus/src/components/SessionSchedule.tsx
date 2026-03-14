@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { SessionInfo, QualifyingResult, RaceResult } from "@/lib/api";
+import { driverPhotoUrl, teamColor, constructorIdFromName } from "@/lib/api";
 
 interface Props {
   sessions: SessionInfo[];
@@ -202,83 +203,95 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
               )}
             </div>
 
-            {/* Expanded qualifying results */}
-            {isExpanded && showQualBtn && qualifyingResults && (
-              <div className="border-t border-white/5 px-3 pb-3 pt-2 space-y-1">
-                <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-2">Starting Grid</p>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                  {qualifyingResults.slice(0, 10).map((q) => (
-                    <div key={q.position} className="flex items-center gap-1.5">
-                      <span className={`text-[9px] font-black w-4 text-center flex-shrink-0 tabular-nums ${
-                        q.position === 1 ? "text-yellow-400" : q.position <= 3 ? "text-orange-400" : "text-slate-600"
-                      }`}>
-                        P{q.position}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[10px] font-black italic uppercase truncate block">
-                          {q.driverName.split(" ").slice(-1)[0]}
-                        </span>
-                      </div>
-                      <span className="text-[9px] font-mono text-slate-500 flex-shrink-0 tabular-nums">
-                        {q.q3 || q.q2 || q.q1}
-                      </span>
+            {/* Expanded qualifying / sprint qualifying results */}
+            {isExpanded && (showQualBtn || showSprintQualBtn) && (() => {
+              const results = showQualBtn ? qualifyingResults! : sprintQualResults!;
+              const label = showQualBtn ? "Starting Grid" : "Sprint Starting Grid";
+              const pole = results[0];
+              const poleColor = teamColor(constructorIdFromName(pole.constructor));
+              return (
+                <div className="border-t border-white/5 pt-3 pb-2">
+                  {/* Pole spotlight */}
+                  <div className="flex items-center gap-3 mx-3 mb-2 px-3 py-2.5 rounded-xl" style={{ background: `linear-gradient(90deg, ${poleColor}22 0%, rgba(255,255,255,0.03) 100%)`, border: `1px solid ${poleColor}33` }}>
+                    <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: "rgba(234,179,8,0.2)", border: "1.5px solid rgba(234,179,8,0.5)" }}>
+                      <span className="material-symbols-outlined text-yellow-400 text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Expanded sprint qualifying results */}
-            {isExpanded && showSprintQualBtn && sprintQualResults && (
-              <div className="border-t border-white/5 px-3 pb-3 pt-2 space-y-1">
-                <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-2">Sprint Starting Grid</p>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                  {sprintQualResults.slice(0, 10).map((q) => (
-                    <div key={q.position} className="flex items-center gap-1.5">
-                      <span className={`text-[9px] font-black w-4 text-center flex-shrink-0 tabular-nums ${
-                        q.position === 1 ? "text-yellow-400" : q.position <= 3 ? "text-orange-400" : "text-slate-600"
-                      }`}>
-                        P{q.position}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[10px] font-black italic uppercase truncate block">
-                          {q.driverName.split(" ").slice(-1)[0]}
-                        </span>
-                      </div>
-                      <span className="text-[9px] font-mono text-slate-500 flex-shrink-0 tabular-nums">
-                        {q.q3 || q.q2 || q.q1}
-                      </span>
+                    <img src={driverPhotoUrl(pole.driverCode)} alt={pole.driverName} className="w-8 h-8 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 1.5px ${poleColor}` }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-black italic uppercase leading-tight text-white truncate">{pole.driverName.split(" ").slice(-1)[0]}</p>
+                      <p className="text-[9px] font-bold uppercase truncate" style={{ color: poleColor }}>{pole.constructor.split(" ")[0]}</p>
                     </div>
-                  ))}
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-[8px] text-slate-600 uppercase tracking-widest font-bold">Pole</p>
+                      <p className="text-[11px] font-black tabular-nums text-primary">{pole.q3 || pole.q2 || pole.q1}</p>
+                    </div>
+                  </div>
+                  {/* P2–P10 compact grid */}
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-700 px-3 mb-1.5">{label}</p>
+                  <div className="grid grid-cols-2">
+                    {results.slice(1, 10).map((q) => {
+                      const qColor = teamColor(constructorIdFromName(q.constructor));
+                      return (
+                        <div key={q.position} className="flex items-center gap-2 px-3 py-1.5 border-b border-white/[0.04] last:border-0">
+                          <span className={`text-[10px] font-black w-5 text-center flex-shrink-0 tabular-nums ${q.position <= 3 ? "text-orange-400" : "text-slate-600"}`}>
+                            P{q.position}
+                          </span>
+                          <img src={driverPhotoUrl(q.driverCode)} alt={q.driverName} className="w-5 h-5 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${qColor}` }} />
+                          <span className="flex-1 text-[10px] font-black italic uppercase truncate text-slate-200">
+                            {q.driverName.split(" ").slice(-1)[0]}
+                          </span>
+                          <span className="text-[9px] font-mono text-slate-500 tabular-nums flex-shrink-0">{q.q3 || q.q2 || q.q1}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Expanded sprint results */}
-            {isExpanded && showSprintBtn && sprintResults && (
-              <div className="border-t border-white/5 px-3 pb-3 pt-2 space-y-1">
-                <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-2">Sprint Results</p>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                  {sprintResults.slice(0, 8).map((r, idx) => (
-                    <div key={r.driver} className="flex items-center gap-1.5">
-                      <span className={`text-[9px] font-black w-4 text-center flex-shrink-0 tabular-nums ${
-                        idx === 0 ? "text-yellow-400" : idx < 3 ? "text-orange-400" : "text-slate-600"
-                      }`}>
-                        P{r.position}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[10px] font-black italic uppercase truncate block">
-                          {r.driverName.split(" ").slice(-1)[0]}
-                        </span>
-                      </div>
-                      <span className="text-[9px] font-mono text-slate-500 flex-shrink-0 tabular-nums">
-                        {r.time}
-                      </span>
+            {isExpanded && showSprintBtn && sprintResults && (() => {
+              const winner = sprintResults[0];
+              const winnerColor = teamColor(constructorIdFromName(winner.constructor));
+              return (
+                <div className="border-t border-white/5 pt-3 pb-2">
+                  {/* Winner spotlight */}
+                  <div className="flex items-center gap-3 mx-3 mb-2 px-3 py-2.5 rounded-xl" style={{ background: `linear-gradient(90deg, ${winnerColor}22 0%, rgba(255,255,255,0.03) 100%)`, border: `1px solid ${winnerColor}33` }}>
+                    <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: "rgba(234,179,8,0.2)", border: "1.5px solid rgba(234,179,8,0.5)" }}>
+                      <span className="material-symbols-outlined text-yellow-400 text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>military_tech</span>
                     </div>
-                  ))}
+                    <img src={driverPhotoUrl(winner.driver)} alt={winner.driverName} className="w-8 h-8 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 1.5px ${winnerColor}` }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-black italic uppercase leading-tight text-white truncate">{winner.driverName.split(" ").slice(-1)[0]}</p>
+                      <p className="text-[9px] font-bold uppercase truncate" style={{ color: winnerColor }}>{winner.constructor.split(" ")[0]}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-[8px] text-slate-600 uppercase tracking-widest font-bold">Winner</p>
+                      <p className="text-[11px] font-black tabular-nums text-primary">{winner.time}</p>
+                    </div>
+                  </div>
+                  {/* P2–P8 */}
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-700 px-3 mb-1.5">Sprint Results</p>
+                  <div className="grid grid-cols-2">
+                    {sprintResults.slice(1, 8).map((r) => {
+                      const rColor = teamColor(constructorIdFromName(r.constructor));
+                      return (
+                        <div key={r.driver} className="flex items-center gap-2 px-3 py-1.5 border-b border-white/[0.04] last:border-0">
+                          <span className={`text-[10px] font-black w-5 text-center flex-shrink-0 tabular-nums ${Number(r.position) <= 3 ? "text-orange-400" : "text-slate-600"}`}>
+                            P{r.position}
+                          </span>
+                          <img src={driverPhotoUrl(r.driver)} alt={r.driverName} className="w-5 h-5 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${rColor}` }} />
+                          <span className="flex-1 text-[10px] font-black italic uppercase truncate text-slate-200">
+                            {r.driverName.split(" ").slice(-1)[0]}
+                          </span>
+                          <span className="text-[9px] font-mono text-slate-500 tabular-nums flex-shrink-0">{r.time}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         );
       })}

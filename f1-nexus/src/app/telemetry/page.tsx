@@ -7,6 +7,7 @@ import {
   getRaceResults,
   getSprintResultsForRound,
   getQualifyingResultsForRound,
+  getSprintQualifyingResultsForRound,
   type ScheduleRace,
   type TelemetryData,
   type DriverStanding,
@@ -23,7 +24,7 @@ const ALL_SESSIONS = [
   { val: "R", label: "Race", icon: "flag", color: "#e00700" },
   { val: "Q", label: "Qualifying", icon: "speed", color: "#60a5fa" },
   { val: "S", label: "Sprint", icon: "flash_on", color: "#fb923c" },
-  { val: "SQ", label: "Sprint Shootout", icon: "speed", color: "#fb923c" },
+  { val: "SQ", label: "Sprint Qualifying", icon: "speed", color: "#fb923c" },
   { val: "FP1", label: "Free Practice 1", icon: "timer", color: "#94a3b8" },
   { val: "FP2", label: "Free Practice 2", icon: "timer", color: "#94a3b8" },
   { val: "FP3", label: "Free Practice 3", icon: "timer", color: "#94a3b8" },
@@ -161,7 +162,7 @@ export default function TelemetryPage() {
         setSessionResults(results ?? []);
         setQualifyingResults([]);
       } else if (session === "Q" || session === "SQ") {
-        const fn = session === "SQ" ? getQualifyingResultsForRound : getQualifyingResultsForRound;
+        const fn = session === "SQ" ? getSprintQualifyingResultsForRound : getQualifyingResultsForRound;
         const { results } = await fn(String(year), schedule[raceIdx].round);
         setQualifyingResults(results ?? []);
         setSessionResults([]);
@@ -596,18 +597,13 @@ export default function TelemetryPage() {
 
                           {isQ && (() => {
                             const qr = qualifyingResults.find((q) => q.driverCode === t.driver);
+                            const pos = qr?.position ?? null;
                             return <>
-                              <td className="px-3 py-3 text-center font-mono text-slate-400">{qr?.q1 || res?.Q1 || "—"}</td>
-                              <td className="px-3 py-3 text-center font-mono text-slate-400">{qr?.q2 || res?.Q2 || "—"}</td>
-                              <td className="px-3 py-3 text-center font-mono text-slate-400">{qr?.q3 || res?.Q3 || "—"}</td>
+                              <td className="px-3 py-3 text-center font-mono text-slate-400 text-[11px]">{qr?.q1 || res?.Q1 || "—"}</td>
+                              <td className="px-3 py-3 text-center font-mono text-slate-400 text-[11px]">{qr?.q2 || res?.Q2 || "—"}</td>
+                              <td className="px-3 py-3 text-center font-mono text-slate-400 text-[11px]">{qr?.q3 || res?.Q3 || "—"}</td>
                               <td className="px-3 py-3 text-center">
-                                {qr ? (
-                                  <span className={`font-black text-sm ${qr.position === 1 ? "text-yellow-400" : qr.position <= 3 ? "text-orange-400" : "text-slate-200"}`}>
-                                    P{qr.position}
-                                  </span>
-                                ) : res?.Position ? (
-                                  <span className="font-black text-slate-200">P{res.Position}</span>
-                                ) : "—"}
+                                <PositionBadge pos={pos ?? (res?.Position ?? null)} />
                               </td>
                             </>;
                           })()}
@@ -616,10 +612,8 @@ export default function TelemetryPage() {
                               {(() => {
                                 const rr = sessionResults.find((r) => r.driver === t.driver);
                                 return rr ? (
-                                  <div>
-                                    <span className={`font-black text-sm ${rr.position === "1" ? "text-yellow-400" : rr.position === "2" ? "text-slate-300" : rr.position === "3" ? "text-orange-400" : "text-slate-200"}`}>
-                                      P{rr.position}
-                                    </span>
+                                  <div className="flex flex-col items-center gap-0.5">
+                                    <PositionBadge pos={Number(rr.position)} />
                                     <p className="text-[9px] text-slate-600 font-mono">{rr.time}</p>
                                   </div>
                                 ) : (
@@ -789,4 +783,25 @@ export default function TelemetryPage() {
       )}
     </div>
   );
+}
+
+function PositionBadge({ pos }: { pos: number | null }) {
+  if (!pos) return <span className="text-slate-700 text-xs">—</span>;
+  if (pos === 1) return (
+    <div className="inline-flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(234,179,8,0.18)", border: "1px solid rgba(234,179,8,0.4)" }}>
+      <span className="material-symbols-outlined text-yellow-400 text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
+      <span className="font-black text-yellow-400 text-[11px]">P1</span>
+    </div>
+  );
+  if (pos === 2) return (
+    <div className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-slate-400/15 border border-slate-400/35">
+      <span className="font-black text-slate-300 text-[11px]">P2</span>
+    </div>
+  );
+  if (pos === 3) return (
+    <div className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-orange-700/15 border border-orange-500/35">
+      <span className="font-black text-orange-400 text-[11px]">P3</span>
+    </div>
+  );
+  return <span className="font-black text-slate-400 text-[11px]">P{pos}</span>;
 }
