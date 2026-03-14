@@ -510,6 +510,56 @@ export interface QualifyingResult {
   q3: string;
 }
 
+// Sprint Qualifying (determines sprint race grid) — Jolpica supports this endpoint
+export async function getLastSprintQualifyingResults(): Promise<{ race: RaceInfo | null; results: QualifyingResult[] }> {
+  try {
+    const res = await fetch("https://api.jolpi.ca/ergast/f1/current/last/sprint_qualifying.json", {
+      next: { revalidate: 120 },
+    });
+    if (!res.ok) return { race: null, results: [] };
+    const data = await res.json() as {
+      MRData?: {
+        RaceTable?: {
+          Races?: Array<{
+            raceName: string; round: string; date: string;
+            Circuit?: { circuitName: string; Location?: { locality: string; country: string } };
+            SprintQualifyingResults?: Array<{
+              position: string;
+              Driver?: { code?: string; givenName: string; familyName: string };
+              Constructor?: { name: string };
+              Q1?: string; Q2?: string; Q3?: string;
+            }>;
+          }>;
+        };
+      };
+    };
+    const races = data?.MRData?.RaceTable?.Races ?? [];
+    if (!races.length || !races[0].SprintQualifyingResults?.length) return { race: null, results: [] };
+    const r = races[0];
+    return {
+      race: {
+        name: `${r.raceName} · Sprint Qualifying`,
+        circuit: r.Circuit?.circuitName ?? "",
+        date: r.date,
+        round: Number(r.round),
+        locality: r.Circuit?.Location?.locality ?? "",
+        country: r.Circuit?.Location?.country ?? "",
+      },
+      results: r.SprintQualifyingResults!.map((q) => ({
+        position: Number(q.position),
+        driverCode: q.Driver?.code ?? "",
+        driverName: `${q.Driver?.givenName ?? ""} ${q.Driver?.familyName ?? ""}`.trim(),
+        constructor: q.Constructor?.name ?? "",
+        q1: q.Q1 ?? "",
+        q2: q.Q2 ?? "",
+        q3: q.Q3 ?? "",
+      })),
+    };
+  } catch {
+    return { race: null, results: [] };
+  }
+}
+
 export async function getLastQualifyingResults(): Promise<{ race: RaceInfo | null; results: QualifyingResult[] }> {
   try {
     const res = await fetch("https://api.jolpi.ca/ergast/f1/current/last/qualifying.json", {
