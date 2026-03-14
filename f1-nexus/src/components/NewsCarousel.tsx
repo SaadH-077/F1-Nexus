@@ -57,6 +57,16 @@ export default function NewsCarousel({ articles }: Props) {
     dragDelta.current = 0;
   }
 
+  function onScroll() {
+    if (!trackRef.current) return;
+    const track = trackRef.current;
+    const firstChild = track.children[0] as HTMLElement | null;
+    if (!firstChild) return;
+    const cardWidth = firstChild.offsetWidth + 16; // 16 = gap-4
+    const idx = Math.round(track.scrollLeft / cardWidth);
+    setCurrent(Math.max(0, Math.min(total - 1, idx)));
+  }
+
   if (articles.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-slate-600 text-sm">
@@ -76,6 +86,7 @@ export default function NewsCarousel({ articles }: Props) {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
+        onScroll={onScroll}
       >
         {articles.map((a, i) => (
           <a
