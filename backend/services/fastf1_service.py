@@ -7,8 +7,13 @@ import logging
 import threading
 from functools import lru_cache
 
-# Configure FastF1 caching
-fastf1.Cache.enable_cache(settings.CACHE_DIR)
+# Configure FastF1 caching — fail silently if directory isn't writable (e.g. Railway)
+try:
+    import os
+    os.makedirs(settings.CACHE_DIR, exist_ok=True)
+    fastf1.Cache.enable_cache(settings.CACHE_DIR)
+except Exception as _cache_err:
+    print(f"[FastF1] Cache disabled: {_cache_err}")
 logging.getLogger("fastf1").setLevel(logging.WARNING)
 
 class FastF1Service:
@@ -17,7 +22,7 @@ class FastF1Service:
     def __init__(self):
         self._session_cache = {}
         self._session_lock = threading.Lock()
-        self._telemetry_cache = {}
+        self._telemetry_cache: Dict[str, Any] = {}
         self._telemetry_lock = threading.Lock()
         
     def _get_loaded_session(self, year: int, race: str, session_type: str):
