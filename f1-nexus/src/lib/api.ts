@@ -245,6 +245,112 @@ export async function getRaceResults(year: string, round: string): Promise<{ rac
   }
 }
 
+// Fetch qualifying / sprint qualifying / sprint results for a specific round.
+// Used by hub page (current round) and telemetry page (any round).
+export async function getQualifyingResultsForRound(year: string, round: string): Promise<{ race: RaceInfo | null; results: QualifyingResult[] }> {
+  try {
+    const res = await fetch(`https://api.jolpi.ca/ergast/f1/${year}/${round}/qualifying.json`, {
+      next: { revalidate: 120 },
+    });
+    if (!res.ok) return { race: null, results: [] };
+    const data = await res.json() as {
+      MRData?: { RaceTable?: { Races?: Array<{
+        raceName: string; round: string; date: string;
+        Circuit?: { circuitName: string; Location?: { locality: string; country: string } };
+        QualifyingResults?: Array<{
+          position: string;
+          Driver?: { code?: string; givenName: string; familyName: string };
+          Constructor?: { name: string };
+          Q1?: string; Q2?: string; Q3?: string;
+        }>;
+      }> } };
+    };
+    const races = data?.MRData?.RaceTable?.Races ?? [];
+    if (!races.length || !races[0].QualifyingResults?.length) return { race: null, results: [] };
+    const r = races[0];
+    return {
+      race: { name: r.raceName, circuit: r.Circuit?.circuitName ?? "", date: r.date, round: Number(r.round), locality: r.Circuit?.Location?.locality ?? "", country: r.Circuit?.Location?.country ?? "" },
+      results: r.QualifyingResults!.map((q) => ({
+        position: Number(q.position),
+        driverCode: q.Driver?.code ?? "",
+        driverName: `${q.Driver?.givenName ?? ""} ${q.Driver?.familyName ?? ""}`.trim(),
+        constructor: q.Constructor?.name ?? "",
+        q1: q.Q1 ?? "", q2: q.Q2 ?? "", q3: q.Q3 ?? "",
+      })),
+    };
+  } catch { return { race: null, results: [] }; }
+}
+
+export async function getSprintQualifyingResultsForRound(year: string, round: string): Promise<{ race: RaceInfo | null; results: QualifyingResult[] }> {
+  try {
+    const res = await fetch(`https://api.jolpi.ca/ergast/f1/${year}/${round}/sprint_qualifying.json`, {
+      next: { revalidate: 120 },
+    });
+    if (!res.ok) return { race: null, results: [] };
+    const data = await res.json() as {
+      MRData?: { RaceTable?: { Races?: Array<{
+        raceName: string; round: string; date: string;
+        Circuit?: { circuitName: string; Location?: { locality: string; country: string } };
+        SprintQualifyingResults?: Array<{
+          position: string;
+          Driver?: { code?: string; givenName: string; familyName: string };
+          Constructor?: { name: string };
+          Q1?: string; Q2?: string; Q3?: string;
+        }>;
+      }> } };
+    };
+    const races = data?.MRData?.RaceTable?.Races ?? [];
+    if (!races.length || !races[0].SprintQualifyingResults?.length) return { race: null, results: [] };
+    const r = races[0];
+    return {
+      race: { name: `${r.raceName} · Sprint Qualifying`, circuit: r.Circuit?.circuitName ?? "", date: r.date, round: Number(r.round) },
+      results: r.SprintQualifyingResults!.map((q) => ({
+        position: Number(q.position),
+        driverCode: q.Driver?.code ?? "",
+        driverName: `${q.Driver?.givenName ?? ""} ${q.Driver?.familyName ?? ""}`.trim(),
+        constructor: q.Constructor?.name ?? "",
+        q1: q.Q1 ?? "", q2: q.Q2 ?? "", q3: q.Q3 ?? "",
+      })),
+    };
+  } catch { return { race: null, results: [] }; }
+}
+
+export async function getSprintResultsForRound(year: string, round: string): Promise<{ race: RaceInfo | null; results: RaceResult[] }> {
+  try {
+    const res = await fetch(`https://api.jolpi.ca/ergast/f1/${year}/${round}/sprint.json`, {
+      next: { revalidate: 120 },
+    });
+    if (!res.ok) return { race: null, results: [] };
+    const data = await res.json() as {
+      MRData?: { RaceTable?: { Races?: Array<{
+        raceName: string; round: string; date: string;
+        Circuit?: { circuitName: string };
+        SprintResults?: Array<{
+          position: string;
+          Driver?: { code?: string; driverId: string; givenName: string; familyName: string };
+          Constructor?: { name: string };
+          points: string; grid?: string;
+          Time?: { time: string }; status: string;
+        }>;
+      }> } };
+    };
+    const races = data?.MRData?.RaceTable?.Races ?? [];
+    if (!races.length || !races[0].SprintResults?.length) return { race: null, results: [] };
+    const r = races[0];
+    return {
+      race: { name: `${r.raceName} · Sprint`, circuit: r.Circuit?.circuitName ?? "", date: r.date, round: Number(r.round) },
+      results: r.SprintResults!.map((s) => ({
+        position: s.position,
+        driver: s.Driver?.code ?? s.Driver?.driverId ?? "",
+        driverName: `${s.Driver?.givenName ?? ""} ${s.Driver?.familyName ?? ""}`.trim(),
+        constructor: s.Constructor?.name ?? "",
+        points: s.points, grid: s.grid ?? "", status: s.status,
+        time: s.Time?.time ?? s.status ?? "",
+      })),
+    };
+  } catch { return { race: null, results: [] }; }
+}
+
 // ─── Predictor ────────────────────────────────────────────────────────────────
 
 export async function getPredictions(year: number, race: string): Promise<PredictorData | null> {

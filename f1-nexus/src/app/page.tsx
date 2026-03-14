@@ -3,9 +3,9 @@ import {
   getConstructorStandings,
   getNextRace,
   getLastRaceResults,
-  getLastSprintResults,
-  getLastQualifyingResults,
-  getLastSprintQualifyingResults,
+  getQualifyingResultsForRound,
+  getSprintQualifyingResultsForRound,
+  getSprintResultsForRound,
   getNews,
   teamColor,
   constructorIdFromName,
@@ -42,15 +42,19 @@ function positionBadgeClass(pos: number) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [driversRaw, constructors, { race: lastRace, results: lastResults }, { race: lastSprint, results: sprintResults }, { race: lastQualifying, results: qualifyingResults }, { race: lastSprintQual, results: sprintQualResults }, nextRace, newsArticles] =
+  // Fetch nextRace first so we can use its round for qualifying/sprint data
+  const nextRace = await getNextRace();
+  const currentYear = "current";
+  const currentRound = nextRace?.round ?? "last";
+
+  const [driversRaw, constructors, { race: lastRace, results: lastResults }, { results: currentQualResults }, { results: currentSprintQualResults }, { race: currentSprintRace, results: currentSprintResults }, newsArticles] =
     await Promise.all([
       getDriverStandings(),
       getConstructorStandings(),
       getLastRaceResults(),
-      getLastSprintResults(),
-      getLastQualifyingResults(),
-      getLastSprintQualifyingResults(),
-      getNextRace(),
+      getQualifyingResultsForRound(currentYear, currentRound),
+      getSprintQualifyingResultsForRound(currentYear, currentRound),
+      getSprintResultsForRound(currentYear, currentRound),
       getNews(),
     ]);
 
@@ -62,20 +66,6 @@ export default async function HomePage() {
   const circuitImgPath = nextRace
     ? localCircuitImage(nextRace.locality, nextRace.country)
     : null;
-
-  // Surface results only for the CURRENT race weekend.
-  // Use date proximity: the session date must fall within 5 days of the next race date.
-  // This is more reliable than round-number comparison (different API sources can disagree on round).
-  const nextRaceMs = nextRace ? new Date(nextRace.date).getTime() : 0;
-  const fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
-  function isCurrentWeekend(dateStr?: string) {
-    if (!nextRaceMs || !dateStr) return false;
-    const t = new Date(dateStr).getTime();
-    return t >= nextRaceMs - fiveDaysMs && t <= nextRaceMs + 86400 * 1000;
-  }
-  const currentQualResults = isCurrentWeekend(lastQualifying?.date) ? qualifyingResults : [];
-  const currentSprintResults = isCurrentWeekend(lastSprint?.date) ? sprintResults : [];
-  const currentSprintQualResults = isCurrentWeekend(lastSprintQual?.date) ? sprintQualResults : [];
 
   const maxPts = constructors.length > 0 ? Math.max(1, Number(constructors[0].points)) : 1;
 
@@ -132,7 +122,7 @@ export default async function HomePage() {
           </div>
         )}
 
-        {lastSprint?.name && sprintResults[0] && (
+        {currentSprintRace?.name && currentSprintResults[0] && (
           <>
             <div className="w-px h-8 bg-border-dark flex-shrink-0" />
             <div className="flex items-center gap-3 flex-shrink-0">
@@ -140,8 +130,8 @@ export default async function HomePage() {
               <div>
                 <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Sprint Winner</p>
                 <p className="text-sm font-black italic uppercase leading-tight">
-                  {sprintResults[0].driverName.split(" ").slice(-1)[0]}
-                  <span className="text-slate-400 ml-2 font-normal text-xs not-italic">{lastSprint.name.replace(" · Sprint", "")}</span>
+                  {currentSprintResults[0].driverName.split(" ").slice(-1)[0]}
+                  <span className="text-slate-400 ml-2 font-normal text-xs not-italic">{currentSprintRace.name.replace(" · Sprint", "")}</span>
                 </p>
               </div>
             </div>

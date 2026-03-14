@@ -5,9 +5,12 @@ import {
   getDriverTelemetry,
   getDriverStandings,
   getRaceResults,
+  getSprintResultsForRound,
+  getQualifyingResultsForRound,
   type ScheduleRace,
   type TelemetryData,
   type DriverStanding,
+  type QualifyingResult,
   teamColor,
   constructorIdFromName,
   driverPhotoUrl,
@@ -119,6 +122,7 @@ export default function TelemetryPage() {
   const [availableLaps, setAvailableLaps] = useState<number[]>([]);
   const [telemetries, setTelemetries] = useState<ProcessedTelemetry[]>([]);
   const [sessionResults, setSessionResults] = useState<{ position: string; driver: string; driverName: string; constructor: string; time: string }[]>([]);
+  const [qualifyingResults, setQualifyingResults] = useState<QualifyingResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -150,12 +154,25 @@ export default function TelemetryPage() {
     const raceName = schedule[raceIdx].raceName;
     const year = new Date(schedule[raceIdx].date).getFullYear();
 
-    // Fetch race results for session context (R or Q)
+    // Fetch session-specific results for position context
     try {
-      const raceData = await getRaceResults(String(year), schedule[raceIdx].round);
-      setSessionResults(raceData.results ?? []);
+      if (session === "S") {
+        const { results } = await getSprintResultsForRound(String(year), schedule[raceIdx].round);
+        setSessionResults(results ?? []);
+        setQualifyingResults([]);
+      } else if (session === "Q" || session === "SQ") {
+        const fn = session === "SQ" ? getQualifyingResultsForRound : getQualifyingResultsForRound;
+        const { results } = await fn(String(year), schedule[raceIdx].round);
+        setQualifyingResults(results ?? []);
+        setSessionResults([]);
+      } else {
+        const raceData = await getRaceResults(String(year), schedule[raceIdx].round);
+        setSessionResults(raceData.results ?? []);
+        setQualifyingResults([]);
+      }
     } catch {
       setSessionResults([]);
+      setQualifyingResults([]);
     }
 
     const promises = selectedDrivers.map(async (code) => {
@@ -527,9 +544,9 @@ export default function TelemetryPage() {
                         <th className="px-3 py-3 text-center">Q1</th>
                         <th className="px-3 py-3 text-center">Q2</th>
                         <th className="px-3 py-3 text-center">Q3</th>
-                        <th className="px-3 py-3 text-center">Pos</th>
+                        <th className="px-3 py-3 text-center">Grid</th>
                       </>}
-                      {session === "R" && <th className="px-3 py-3 text-center">Finish</th>}
+                      {(session === "R" || session === "S") && <th className="px-3 py-3 text-center">Finish</th>}
                       {isFP && <th className="px-3 py-3 text-center">Total Laps</th>}
                       <th className="px-3 py-3 text-center border-l border-border-dark">Sector 1</th>
                       <th className="px-3 py-3 text-center border-l border-border-dark">Sector 2</th>
@@ -577,21 +594,32 @@ export default function TelemetryPage() {
                             </div>
                           </td>
 
-                          {isQ && <>
-                            <td className="px-3 py-3 text-center font-mono text-slate-400">{res?.Q1 ?? "—"}</td>
-                            <td className="px-3 py-3 text-center font-mono text-slate-400">{res?.Q2 ?? "—"}</td>
-                            <td className="px-3 py-3 text-center font-mono text-slate-400">{res?.Q3 ?? "—"}</td>
-                            <td className="px-3 py-3 text-center font-black text-slate-200">
-                              {res?.Position ? `P${res.Position}` : "—"}
-                            </td>
-                          </>}
-                          {session === "R" && (
+                          {isQ && (() => {
+                            const qr = qualifyingResults.find((q) => q.driverCode === t.driver);
+                            return <>
+                              <td className="px-3 py-3 text-center font-mono text-slate-400">{qr?.q1 || res?.Q1 || "—"}</td>
+                              <td className="px-3 py-3 text-center font-mono text-slate-400">{qr?.q2 || res?.Q2 || "—"}</td>
+                              <td className="px-3 py-3 text-center font-mono text-slate-400">{qr?.q3 || res?.Q3 || "—"}</td>
+                              <td className="px-3 py-3 text-center">
+                                {qr ? (
+                                  <span className={`font-black text-sm ${qr.position === 1 ? "text-yellow-400" : qr.position <= 3 ? "text-orange-400" : "text-slate-200"}`}>
+                                    P{qr.position}
+                                  </span>
+                                ) : res?.Position ? (
+                                  <span className="font-black text-slate-200">P{res.Position}</span>
+                                ) : "—"}
+                              </td>
+                            </>;
+                          })()}
+                          {(session === "R" || session === "S") && (
                             <td className="px-3 py-3 text-center">
                               {(() => {
                                 const rr = sessionResults.find((r) => r.driver === t.driver);
                                 return rr ? (
                                   <div>
-                                    <span className="font-black text-slate-200">P{rr.position}</span>
+                                    <span className={`font-black text-sm ${rr.position === "1" ? "text-yellow-400" : rr.position === "2" ? "text-slate-300" : rr.position === "3" ? "text-orange-400" : "text-slate-200"}`}>
+                                      P{rr.position}
+                                    </span>
                                     <p className="text-[9px] text-slate-600 font-mono">{rr.time}</p>
                                   </div>
                                 ) : (
