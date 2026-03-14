@@ -5,6 +5,7 @@ import {
   getLastRaceResults,
   getLastSprintResults,
   getLastQualifyingResults,
+  getLastSprintQualifyingResults,
   getNews,
   teamColor,
   constructorIdFromName,
@@ -41,13 +42,14 @@ function positionBadgeClass(pos: number) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [driversRaw, constructors, { race: lastRace, results: lastResults }, { race: lastSprint, results: sprintResults }, { race: lastQualifying, results: qualifyingResults }, nextRace, newsArticles] =
+  const [driversRaw, constructors, { race: lastRace, results: lastResults }, { race: lastSprint, results: sprintResults }, { race: lastQualifying, results: qualifyingResults }, { race: lastSprintQual, results: sprintQualResults }, nextRace, newsArticles] =
     await Promise.all([
       getDriverStandings(),
       getConstructorStandings(),
       getLastRaceResults(),
       getLastSprintResults(),
       getLastQualifyingResults(),
+      getLastSprintQualifyingResults(),
       getNextRace(),
       getNews(),
     ]);
@@ -61,10 +63,19 @@ export default async function HomePage() {
     ? localCircuitImage(nextRace.locality, nextRace.country)
     : null;
 
-  // Only surface results that belong to the CURRENT race weekend (round must match nextRace)
-  const currentRound = Number(nextRace?.round ?? 0);
-  const currentQualResults = lastQualifying?.round === currentRound ? qualifyingResults : [];
-  const currentSprintResults = lastSprint?.round === currentRound ? sprintResults : [];
+  // Surface results only for the CURRENT race weekend.
+  // Use date proximity: the session date must fall within 5 days of the next race date.
+  // This is more reliable than round-number comparison (different API sources can disagree on round).
+  const nextRaceMs = nextRace ? new Date(nextRace.date).getTime() : 0;
+  const fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
+  function isCurrentWeekend(dateStr?: string) {
+    if (!nextRaceMs || !dateStr) return false;
+    const t = new Date(dateStr).getTime();
+    return t >= nextRaceMs - fiveDaysMs && t <= nextRaceMs + 86400 * 1000;
+  }
+  const currentQualResults = isCurrentWeekend(lastQualifying?.date) ? qualifyingResults : [];
+  const currentSprintResults = isCurrentWeekend(lastSprint?.date) ? sprintResults : [];
+  const currentSprintQualResults = isCurrentWeekend(lastSprintQual?.date) ? sprintQualResults : [];
 
   const maxPts = constructors.length > 0 ? Math.max(1, Number(constructors[0].points)) : 1;
 
@@ -230,6 +241,7 @@ export default async function HomePage() {
                   raceName={nextRace.raceName}
                   qualifyingResults={currentQualResults}
                   sprintResults={currentSprintResults}
+                  sprintQualResults={currentSprintQualResults}
                 />
               )}
             </div>

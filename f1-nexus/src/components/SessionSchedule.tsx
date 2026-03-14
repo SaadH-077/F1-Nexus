@@ -8,6 +8,7 @@ interface Props {
   raceName?: string;
   qualifyingResults?: QualifyingResult[];
   sprintResults?: RaceResult[];
+  sprintQualResults?: QualifyingResult[];
 }
 
 interface SessionState {
@@ -67,7 +68,7 @@ function fmt(iso: string) {
   } catch { return iso; }
 }
 
-export default function SessionSchedule({ sessions, raceDate, raceName, qualifyingResults, sprintResults }: Props) {
+export default function SessionSchedule({ sessions, raceDate, raceName, qualifyingResults, sprintResults, sprintQualResults }: Props) {
   const [states, setStates] = useState<SessionState[] | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -96,6 +97,7 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
 
   const hasQualResults = (qualifyingResults?.length ?? 0) > 0;
   const hasSprintResults = (sprintResults?.length ?? 0) > 0;
+  const hasSprintQualResults = (sprintQualResults?.length ?? 0) > 0;
 
   return (
     <div className="space-y-1.5 mb-6">
@@ -110,7 +112,8 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
 
         const showQualBtn = st?.isPast && s.label === "Qualifying" && hasQualResults;
         const showSprintBtn = st?.isPast && s.label === "Sprint" && hasSprintResults;
-        const hasBtn = showQualBtn || showSprintBtn;
+        const showSprintQualBtn = st?.isPast && s.label === "Sprint Qualifying" && hasSprintQualResults;
+        const hasBtn = showQualBtn || showSprintBtn || showSprintQualBtn;
         const isExpanded = expanded === s.label;
 
         return (
@@ -205,6 +208,32 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
                 <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-2">Starting Grid</p>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1">
                   {qualifyingResults.slice(0, 10).map((q) => (
+                    <div key={q.position} className="flex items-center gap-1.5">
+                      <span className={`text-[9px] font-black w-4 text-center flex-shrink-0 tabular-nums ${
+                        q.position === 1 ? "text-yellow-400" : q.position <= 3 ? "text-orange-400" : "text-slate-600"
+                      }`}>
+                        P{q.position}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] font-black italic uppercase truncate block">
+                          {q.driverName.split(" ").slice(-1)[0]}
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-500 flex-shrink-0 tabular-nums">
+                        {q.q3 || q.q2 || q.q1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Expanded sprint qualifying results */}
+            {isExpanded && showSprintQualBtn && sprintQualResults && (
+              <div className="border-t border-white/5 px-3 pb-3 pt-2 space-y-1">
+                <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-2">Sprint Starting Grid</p>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                  {sprintQualResults.slice(0, 10).map((q) => (
                     <div key={q.position} className="flex items-center gap-1.5">
                       <span className={`text-[9px] font-black w-4 text-center flex-shrink-0 tabular-nums ${
                         q.position === 1 ? "text-yellow-400" : q.position <= 3 ? "text-orange-400" : "text-slate-600"
