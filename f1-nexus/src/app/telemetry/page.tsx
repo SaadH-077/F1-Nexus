@@ -542,10 +542,10 @@ export default function TelemetryPage() {
                     <tr className="bg-white/[0.02] border-b border-border-dark text-slate-600 font-black uppercase tracking-wider">
                       <th className="px-4 py-3 text-left">Driver</th>
                       {isQ && <>
-                        <th className="px-3 py-3 text-center">Q1</th>
-                        <th className="px-3 py-3 text-center">Q2</th>
-                        <th className="px-3 py-3 text-center">Q3</th>
-                        <th className="px-3 py-3 text-center">Grid</th>
+                        <th className="px-3 py-3 text-center">{session === "SQ" ? "SQ1" : "Q1"}</th>
+                        <th className="px-3 py-3 text-center">{session === "SQ" ? "SQ2" : "Q2"}</th>
+                        <th className="px-3 py-3 text-center">{session === "SQ" ? "SQ3" : "Q3"}</th>
+                        <th className="px-3 py-3 text-center">{session === "SQ" ? "Sprint Grid" : "Race Grid"}</th>
                       </>}
                       {(session === "R" || session === "S") && <th className="px-3 py-3 text-center">Finish</th>}
                       {isFP && <th className="px-3 py-3 text-center">Total Laps</th>}
