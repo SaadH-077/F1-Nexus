@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     description: "Live F1 standings, race strategy simulation, telemetry, and predictive analytics for the 2026 season.",
   },
   manifest: "/manifest.json",
-  themeColor: "#ff1500",
+  themeColor: "#e00700",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
