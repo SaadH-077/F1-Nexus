@@ -7,13 +7,13 @@ export default function NotFound() {
       {/* Ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-[0.06]"
-          style={{ background: "radial-gradient(circle, #e00700, transparent 70%)" }} />
+          style={{ background: "radial-gradient(circle, #ff1500, transparent 70%)" }} />
       </div>
 
       {/* Red flag icon */}
       <div className="relative mb-8">
         <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 mx-auto"
-          style={{ boxShadow: "0 0 40px rgba(224,7,0,0.15)" }}>
+          style={{ boxShadow: "0 0 40px rgba(255,21,0,0.15)" }}>
           <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             flag
           </span>
@@ -65,7 +65,7 @@ export default function NotFound() {
       <Link
         href="/"
         className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase text-sm tracking-widest transition-all"
-        style={{ boxShadow: "0 0 24px rgba(224,7,0,0.3)" }}
+        style={{ boxShadow: "0 0 24px rgba(255,21,0,0.3)" }}
       >
         <span className="material-symbols-outlined text-sm">garage</span>
         Return to Pit Lane

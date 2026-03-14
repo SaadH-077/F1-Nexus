@@ -32,7 +32,7 @@ function timeUntil(isoDate: string): string {
 const SESSION_COLORS: Record<string, string> = {
   FP1: "#94a3b8", FP2: "#94a3b8", FP3: "#94a3b8",
   Qualifying: "#60a5fa", "Sprint Qualifying": "#fb923c",
-  Sprint: "#fb923c", RACE: "#e00700",
+  Sprint: "#fb923c", RACE: "#ff1500",
 };
 
 const REMINDER_SESSIONS = new Set(["Qualifying", "Sprint Qualifying", "Sprint", "RACE"]);
