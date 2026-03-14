@@ -50,6 +50,31 @@
   --color-slate-900: #0f172a;
 }
 
+/* ── Primary color opacity overrides ────────────────────────────────────────
+   Tailwind v4 uses color-mix(in oklab) for opacity variants, which maps
+   deep red through pink when interpolating toward transparent. Override
+   every primary/* variant with explicit sRGB rgba() to fix mobile rendering. */
+.bg-primary\/5   { background-color: rgba(224,7,0,0.05)  !important; }
+.bg-primary\/10  { background-color: rgba(224,7,0,0.10)  !important; }
+.bg-primary\/15  { background-color: rgba(224,7,0,0.15)  !important; }
+.bg-primary\/20  { background-color: rgba(224,7,0,0.20)  !important; }
+.bg-primary\/30  { background-color: rgba(224,7,0,0.30)  !important; }
+.bg-primary\/40  { background-color: rgba(224,7,0,0.40)  !important; }
+.bg-primary\/50  { background-color: rgba(224,7,0,0.50)  !important; }
+.border-primary\/10 { border-color: rgba(224,7,0,0.10)   !important; }
+.border-primary\/20 { border-color: rgba(224,7,0,0.20)   !important; }
+.border-primary\/30 { border-color: rgba(224,7,0,0.30)   !important; }
+.border-primary\/40 { border-color: rgba(224,7,0,0.40)   !important; }
+.border-primary\/50 { border-color: rgba(224,7,0,0.50)   !important; }
+.text-primary\/50 { color: rgba(224,7,0,0.50)            !important; }
+.text-primary\/60 { color: rgba(224,7,0,0.60)            !important; }
+.text-primary\/70 { color: rgba(224,7,0,0.70)            !important; }
+.text-primary\/80 { color: rgba(224,7,0,0.80)            !important; }
+.text-primary\/90 { color: rgba(224,7,0,0.90)            !important; }
+.shadow-primary\/20 { --tw-shadow-color: rgba(224,7,0,0.20) !important; }
+.shadow-primary\/30 { --tw-shadow-color: rgba(224,7,0,0.30) !important; }
+.animate-ping.bg-primary { background-color: #e00700 !important; }
+
 html {
   color-scheme: dark;
   scroll-behavior: smooth;

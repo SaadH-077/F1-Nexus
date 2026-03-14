@@ -197,6 +197,19 @@ export default async function HomePage() {
               {/* Countdown */}
               {nextRace?.date && <Countdown targetDate={nextRace.date} />}
 
+              {/* Circuit layout — mobile only (hidden on lg where right column takes over) */}
+              {circuitImgPath && (
+                <div className="lg:hidden relative flex items-center justify-center mb-6 rounded-xl overflow-hidden" style={{ height: "160px" }}>
+                  <div className="absolute inset-0 rounded-xl" style={{ background: "radial-gradient(ellipse at center, rgba(224,7,0,0.12) 0%, transparent 70%)" }} />
+                  <img
+                    src={circuitImgPath}
+                    alt={nextRace?.circuit ?? "Circuit"}
+                    className="max-w-full max-h-full object-contain"
+                    style={{ filter: "drop-shadow(0 0 18px rgba(224,7,0,0.45)) brightness(1.05)" }}
+                  />
+                </div>
+              )}
+
               {/* Session Schedule */}
               {nextRace && (
                 <SessionSchedule
