@@ -4,6 +4,7 @@ import {
   getNextRace,
   getLastRaceResults,
   getLastSprintResults,
+  getLastQualifyingResults,
   getNews,
   teamColor,
   constructorIdFromName,
@@ -40,15 +41,21 @@ function positionBadgeClass(pos: number) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [drivers, constructors, { race: lastRace, results: lastResults }, { race: lastSprint, results: sprintResults }, nextRace, newsArticles] =
+  const [driversRaw, constructors, { race: lastRace, results: lastResults }, { race: lastSprint, results: sprintResults }, { race: lastQualifying, results: qualifyingResults }, nextRace, newsArticles] =
     await Promise.all([
       getDriverStandings(),
       getConstructorStandings(),
       getLastRaceResults(),
       getLastSprintResults(),
+      getLastQualifyingResults(),
       getNextRace(),
       getNews(),
     ]);
+
+  // Always sort by points descending and re-index 1-based positions
+  const drivers = [...driversRaw]
+    .sort((a, b) => Number(b.points) - Number(a.points))
+    .map((d, i) => ({ ...d, position: String(i + 1) }));
 
   const circuitImgPath = nextRace
     ? localCircuitImage(nextRace.locality, nextRace.country)
@@ -270,6 +277,64 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Qualifying / Starting Grid ── */}
+      {lastQualifying && qualifyingResults.length > 0 && (
+        <section className="bg-card-dark border border-border-dark rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+            <h3 className="font-black italic uppercase text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>timer</span>
+              Starting Grid
+              <span className="text-[9px] font-normal not-italic text-slate-500 uppercase tracking-widest ml-1">
+                {lastQualifying.name}
+              </span>
+            </h3>
+            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Qualifying</span>
+          </div>
+
+          {/* Pole spotlight */}
+          {(() => {
+            const pole = qualifyingResults[0];
+            const poleColor = teamColor(constructorIdFromName(pole.constructor));
+            return (
+              <div className="flex items-center gap-4 px-5 py-4 border-b border-border-dark" style={{ background: `linear-gradient(90deg, ${poleColor}18 0%, transparent 60%)` }}>
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500/20 border border-yellow-500/40 flex-shrink-0">
+                  <span className="text-yellow-400 font-black text-xs">P1</span>
+                </div>
+                <img src={driverPhotoUrl(pole.driverCode)} alt={pole.driverName} className="w-10 h-10 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 2px ${poleColor}` }} />
+                <div className="flex-1 min-w-0">
+                  <p className="font-black italic uppercase text-base leading-tight">{pole.driverName.split(" ").slice(-1)[0]}</p>
+                  <p className="text-[10px] font-bold uppercase" style={{ color: poleColor }}>{pole.constructor}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Pole Time</p>
+                  <p className="text-sm font-black tabular-nums text-primary">{pole.q3 || pole.q2 || pole.q1}</p>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* P2–P10 grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-0 divide-y divide-border-dark sm:divide-y-0">
+            {qualifyingResults.slice(1, 10).map((q) => {
+              const qColor = teamColor(constructorIdFromName(q.constructor));
+              return (
+                <div key={q.position} className="flex items-center gap-2.5 px-4 py-2.5 hover:bg-white/5 transition-colors border-b border-border-dark">
+                  <span className={`text-[10px] font-black w-5 text-center flex-shrink-0 ${q.position <= 3 ? "text-primary" : "text-slate-600"}`}>
+                    P{q.position}
+                  </span>
+                  <img src={driverPhotoUrl(q.driverCode)} alt={q.driverName} className="w-7 h-7 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 1.5px ${qColor}` }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-black italic uppercase truncate">{q.driverName.split(" ").slice(-1)[0]}</p>
+                    <p className="text-[9px] font-bold uppercase truncate" style={{ color: qColor }}>{q.constructor.split(" ")[0]}</p>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400 flex-shrink-0 tabular-nums">{q.q3 || q.q2 || q.q1}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* ── Stats Grid ── */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

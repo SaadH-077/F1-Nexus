@@ -33,6 +33,9 @@ export interface RaceInfo {
   name: string;
   circuit: string;
   date: string;
+  round?: number;
+  locality?: string;
+  country?: string;
 }
 
 export interface SessionInfo {
@@ -489,6 +492,65 @@ export async function getLastSprintResults(): Promise<{ race: RaceInfo | null; r
         grid: s.grid ?? "",
         status: s.status,
         time: s.Time?.time ?? s.status ?? "",
+      })),
+    };
+  } catch {
+    return { race: null, results: [] };
+  }
+}
+
+export interface QualifyingResult {
+  position: number;
+  driverCode: string;
+  driverName: string;
+  constructor: string;
+  q1: string;
+  q2: string;
+  q3: string;
+}
+
+export async function getLastQualifyingResults(): Promise<{ race: RaceInfo | null; results: QualifyingResult[] }> {
+  try {
+    const res = await fetch("https://api.jolpi.ca/ergast/f1/current/last/qualifying.json", {
+      next: { revalidate: 120 },
+    });
+    if (!res.ok) return { race: null, results: [] };
+    const data = await res.json() as {
+      MRData?: {
+        RaceTable?: {
+          Races?: Array<{
+            raceName: string; round: string; date: string;
+            Circuit?: { circuitName: string; Location?: { locality: string; country: string } };
+            QualifyingResults?: Array<{
+              position: string;
+              Driver?: { code?: string; givenName: string; familyName: string };
+              Constructor?: { name: string };
+              Q1?: string; Q2?: string; Q3?: string;
+            }>;
+          }>;
+        };
+      };
+    };
+    const races = data?.MRData?.RaceTable?.Races ?? [];
+    if (!races.length || !races[0].QualifyingResults?.length) return { race: null, results: [] };
+    const r = races[0];
+    return {
+      race: {
+        name: r.raceName,
+        circuit: r.Circuit?.circuitName ?? "",
+        date: r.date,
+        round: Number(r.round),
+        locality: r.Circuit?.Location?.locality ?? "",
+        country: r.Circuit?.Location?.country ?? "",
+      },
+      results: r.QualifyingResults!.map((q) => ({
+        position: Number(q.position),
+        driverCode: q.Driver?.code ?? "",
+        driverName: `${q.Driver?.givenName ?? ""} ${q.Driver?.familyName ?? ""}`.trim(),
+        constructor: q.Constructor?.name ?? "",
+        q1: q.Q1 ?? "",
+        q2: q.Q2 ?? "",
+        q3: q.Q3 ?? "",
       })),
     };
   } catch {
