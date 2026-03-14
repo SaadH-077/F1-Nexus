@@ -1,5 +1,9 @@
 # F1 Nexus
 
+![F1 Nexus App Preview](App%20Design/93shots_so.png)
+
+![F1 Nexus App Preview 2](App%20Design/731shots_so.png)
+
 A full-stack Formula 1 analytics platform featuring live standings, race results, telemetry visualisation, race predictions, strategy simulation, AI-generated race analysis, and session email reminders.
 
 ---
