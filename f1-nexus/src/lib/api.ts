@@ -463,6 +463,7 @@ export async function getLastSprintResults(): Promise<{ race: RaceInfo | null; r
         RaceTable?: {
           Races?: Array<{
             raceName: string;
+            round: string;
             date: string;
             Circuit?: { circuitName: string };
             SprintResults?: Array<{
@@ -482,7 +483,7 @@ export async function getLastSprintResults(): Promise<{ race: RaceInfo | null; r
     if (!races.length || !races[0].SprintResults?.length) return { race: null, results: [] };
     const r = races[0];
     return {
-      race: { name: `${r.raceName} · Sprint`, circuit: r.Circuit?.circuitName ?? "", date: r.date },
+      race: { name: `${r.raceName} · Sprint`, circuit: r.Circuit?.circuitName ?? "", date: r.date, round: Number(r.round) },
       results: r.SprintResults!.map((s) => ({
         position: s.position,
         driver: s.Driver?.code ?? s.Driver?.driverId ?? "",
