@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Dark background -->
+  <rect width="32" height="32" rx="6" fill="#0B0B0B"/>
+  <!-- Red accent bar top -->
+  <rect x="0" y="0" width="32" height="3" rx="2" fill="#e00700"/>
+  <!-- F -->
+  <text x="3" y="24" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" letter-spacing="-1">F</text>
+  <!-- 1 -->
+  <text x="14" y="24" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="18" fill="#e00700" letter-spacing="-1">1</text>
+</svg>
