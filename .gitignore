@@ -21,6 +21,11 @@ f1-nexus/.env*
 f1-nexus/*.tsbuildinfo
 f1-nexus/next-env.d.ts
 
+# ── Binaries / executables ───────────────────────────────────────────────────
+*.exe
+*.msi
+*.dmg
+
 # ── Claude / IDE ─────────────────────────────────────────────────────────────
 .claude/
 .vscode/

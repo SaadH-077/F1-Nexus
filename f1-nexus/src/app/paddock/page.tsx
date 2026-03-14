@@ -45,7 +45,7 @@ const DRIVERS_2026 = [
   { code: "HAM", name: "Lewis Hamilton",    team: "Ferrari",      teamId: "ferrari",      nat: "🇬🇧", natCode: "gb", ch: 7, wins:105, poles:104, podiums: 200 },
   // McLaren
   { code: "NOR", name: "Lando Norris",      team: "McLaren",      teamId: "mclaren",      nat: "🇬🇧", natCode: "gb", ch: 1, wins: 10, poles: 15, podiums:  43 },
-  { code: "PIA", name: "Oscar Piastri",     team: "McLaren",      teamId: "mclaren",      nat: "🇦🇺", natCode: "au", ch: 1, wins:  8, poles:  5, podiums:  22 },
+  { code: "PIA", name: "Oscar Piastri",     team: "McLaren",      teamId: "mclaren",      nat: "🇦🇺", natCode: "au", ch: 0, wins:  8, poles:  5, podiums:  22 },
   // Red Bull
   { code: "VER", name: "Max Verstappen",    team: "Red Bull",     teamId: "red_bull",     nat: "🇳🇱", natCode: "nl", ch: 4, wins: 64, poles: 41, podiums: 115 },
   { code: "HAD", name: "Isack Hadjar",      team: "Red Bull",     teamId: "red_bull",     nat: "🇫🇷", natCode: "fr", ch: 0, wins:  0, poles:  0, podiums:   0 },
