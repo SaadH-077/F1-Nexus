@@ -2,7 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"
+# startCommand intentionally omitted — Dockerfile CMD handles this with
+# shell form so Railway's $PORT env var is correctly expanded at runtime
 healthcheckPath = "/health"
 healthcheckTimeout = 120
 restartPolicyType = "on_failure"
