@@ -91,7 +91,7 @@ const TEAMS_2026 = [
 // ─── Resource Cards ────────────────────────────────────────────────────────────
 
 const RESOURCE_PINS = [
-  { title: "2026 Technical Regulations", subtitle: "FIA Official Documents",  desc: "Complete 2026 F1 Technical Regulations — active aerodynamics, new power units, 50/50 hybrid split, DRS abolition.", icon: "description", color: "#e00700", tag: "Official FIA", url: "https://www.fia.com/regulation/category/110" },
+  { title: "2026 Technical Regulations", subtitle: "FIA Official Documents",  desc: "Complete 2026 F1 Technical Regulations — active aerodynamics, new power units, 50/50 hybrid split, DRS abolition.", icon: "description", color: "#ff1500", tag: "Official FIA", url: "https://www.fia.com/regulation/category/110" },
   { title: "F1 Academy",                 subtitle: "Junior Driver Programme",  desc: "The official F1 Academy — developing the next generation of racing talent from karting to single-seaters.", icon: "school", color: "#f97316", tag: "Formula 1", url: "https://www.f1academy.com" },
   { title: "Drive to Survive — Netflix",  subtitle: "Formula 1 Documentary",    desc: "The Emmy-nominated Netflix docuseries — go behind the scenes of F1 with unprecedented access to drivers, teams, and rivalries.", icon: "live_tv", color: "#E50914", tag: "Netflix", url: "https://www.netflix.com/title/80204890" },
   { title: "Pirelli F1 Tyre Guide",      subtitle: "2026 Compound Data",       desc: "Official Pirelli motorsport data — compound allocations, degradation profiles, and race-weekend briefings.", icon: "circle", color: "#fbbf24", tag: "Technical", url: "https://www.pirelli.com/tyres/en-ww/motorsport/f1" },
@@ -128,7 +128,7 @@ export default function PaddockPage() {
       {/* ── Hero Banner ── */}
       <div className="relative overflow-hidden mb-10">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(224,7,0,0.08) 0%, transparent 60%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(255,21,0,0.08) 0%, transparent 60%)" }} />
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         </div>
         <div className="px-4 pt-8 pb-6">

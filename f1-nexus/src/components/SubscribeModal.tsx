@@ -51,7 +51,7 @@ export default function SubscribeModal({ open, onClose }: Props) {
     >
       <div
         className="w-full max-w-md bg-card-dark border border-border-dark rounded-2xl overflow-hidden animate-slide-up"
-        style={{ boxShadow: "0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(224,7,0,0.08)" }}
+        style={{ boxShadow: "0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(255,21,0,0.08)" }}
       >
         {/* Header / Logo */}
         <div className="relative bg-gradient-to-br from-primary via-red-700 to-red-900 px-8 py-8 text-center overflow-hidden">
@@ -141,7 +141,7 @@ export default function SubscribeModal({ open, onClose }: Props) {
                     type="submit"
                     disabled={status === "loading"}
                     className="flex-1 py-3 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                    style={{ boxShadow: "0 0 20px rgba(224,7,0,0.3)" }}
+                    style={{ boxShadow: "0 0 20px rgba(255,21,0,0.3)" }}
                   >
                     {status === "loading" ? (
                       <span className="material-symbols-outlined text-base animate-spin">sync</span>

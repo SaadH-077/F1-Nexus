@@ -5,7 +5,7 @@ import { getPredictions, getSchedule, getDriverStandings, driverPhotoUrl, teamCo
 // ─── Static feature reference ─────────────────────────────────────────────────
 
 const MODEL_FEATURES = [
-  { key: "qualifying",   label: "Qualifying Position",   weight: 28, icon: "timer",          color: "#e00700", desc: "Grid slot — single strongest predictor of race outcome" },
+  { key: "qualifying",   label: "Qualifying Position",   weight: 28, icon: "timer",          color: "#ff1500", desc: "Grid slot — single strongest predictor of race outcome" },
   { key: "recent_form",  label: "Recent Form (5 races)", weight: 22, icon: "trending_up",    color: "#f97316", desc: "Points-weighted average of last 5 race finishes" },
   { key: "track_hist",   label: "Circuit Track History", weight: 16, icon: "map",            color: "#a78bfa", desc: "Driver & team historical performance at this circuit" },
   { key: "team_pace",    label: "Team Pace Differential",weight: 14, icon: "speed",          color: "#60a5fa", desc: "Constructor gap vs field average over last 3 events" },
@@ -278,9 +278,9 @@ export default function PredictorPage() {
                               <div className="w-full rounded-t transition-all"
                                 style={{
                                   height: h,
-                                  background: isTop ? "#e00700" : "rgba(224,7,0,0.2)",
-                                  boxShadow: isTop ? "0 0 12px rgba(224,7,0,0.4)" : undefined,
-                                  borderTop: "1px solid rgba(224,7,0,0.4)",
+                                  background: isTop ? "#ff1500" : "rgba(255,21,0,0.2)",
+                                  boxShadow: isTop ? "0 0 12px rgba(255,21,0,0.4)" : undefined,
+                                  borderTop: "1px solid rgba(255,21,0,0.4)",
                                 }} />
                               <span className={`text-[8px] font-bold font-mono ${isTop ? "text-white" : "text-slate-600"}`}>
                                 {b.pos === "DNF" ? "D" : `P${b.pos}`}

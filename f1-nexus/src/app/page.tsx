@@ -65,7 +65,7 @@ export default async function HomePage() {
   const championDriver = drivers[0];
   const championTeamColor = championDriver
     ? teamColor(constructorIdFromName(championDriver.constructor))
-    : "#e00700";
+    : "#ff1500";
 
   return (
     <div className="max-w-7xl mx-auto px-4 pt-4 pb-24 space-y-6">
@@ -200,12 +200,12 @@ export default async function HomePage() {
               {/* Circuit layout — mobile only (hidden on lg where right column takes over) */}
               {circuitImgPath && (
                 <div className="lg:hidden relative flex items-center justify-center mb-6 rounded-xl overflow-hidden" style={{ height: "160px" }}>
-                  <div className="absolute inset-0 rounded-xl" style={{ background: "radial-gradient(ellipse at center, rgba(224,7,0,0.12) 0%, transparent 70%)" }} />
+                  <div className="absolute inset-0 rounded-xl" style={{ background: "radial-gradient(ellipse at center, rgba(255,21,0,0.12) 0%, transparent 70%)" }} />
                   <img
                     src={circuitImgPath}
                     alt={nextRace?.circuit ?? "Circuit"}
                     className="max-w-full max-h-full object-contain"
-                    style={{ filter: "drop-shadow(0 0 18px rgba(224,7,0,0.45)) brightness(1.05)" }}
+                    style={{ filter: "drop-shadow(0 0 18px rgba(255,21,0,0.45)) brightness(1.05)" }}
                   />
                 </div>
               )}
@@ -254,12 +254,12 @@ export default async function HomePage() {
               <div className="relative w-full h-full flex items-center justify-center">
                 <div
                   className="absolute inset-0 rounded-xl blur-2xl opacity-10"
-                  style={{ background: "radial-gradient(ellipse at center, #e00700, transparent)" }}
+                  style={{ background: "radial-gradient(ellipse at center, #ff1500, transparent)" }}
                 />
                 <img
                   src={circuitImgPath}
                   alt={nextRace?.circuit ?? "Circuit layout"}
-                  className="max-w-full max-h-[400px] object-contain drop-shadow-[0_0_40px_rgba(224,7,0,0.3)]"
+                  className="max-w-full max-h-[400px] object-contain drop-shadow-[0_0_40px_rgba(255,21,0,0.3)]"
                 />
               </div>
             ) : (
@@ -498,7 +498,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Subscribe CTA ── */}
-      <section className="relative overflow-hidden rounded-2xl border border-primary/20 p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(224,7,0,0.06) 0%, rgba(10,10,10,0.95) 60%)' }}>
+      <section className="relative overflow-hidden rounded-2xl border border-primary/20 p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(255,21,0,0.06) 0%, rgba(10,10,10,0.95) 60%)' }}>
         <div className="absolute inset-0 blueprint-grid opacity-30" />
         <div className="relative">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 mb-4">

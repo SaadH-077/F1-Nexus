@@ -17,7 +17,7 @@ import {
 // ─── Session config ────────────────────────────────────────────────────────────
 
 const ALL_SESSIONS = [
-  { val: "R", label: "Race", icon: "flag", color: "#e00700" },
+  { val: "R", label: "Race", icon: "flag", color: "#ff1500" },
   { val: "Q", label: "Qualifying", icon: "speed", color: "#60a5fa" },
   { val: "S", label: "Sprint", icon: "flash_on", color: "#fb923c" },
   { val: "SQ", label: "Sprint Shootout", icon: "speed", color: "#fb923c" },
@@ -668,7 +668,7 @@ export default function TelemetryPage() {
             </div>
 
             {/* Speed */}
-            <ChartCard title="Speed" unit="km/h" icon="speed" iconColor="#e00700" drivers={displayTels} yLabels={["360", "270", "180", "90", "0"]}>
+            <ChartCard title="Speed" unit="km/h" icon="speed" iconColor="#ff1500" drivers={displayTels} yLabels={["360", "270", "180", "90", "0"]}>
               <div className="relative h-52">
                 <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
                   {[0, 1, 2, 3, 4].map((i) => (

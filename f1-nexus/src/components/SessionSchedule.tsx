@@ -53,7 +53,7 @@ const SESSION_LABELS: Record<string, { short: string; icon: string; color: strin
   "Sprint Qualifying": { short: "SQ", icon: "speed", color: "#fb923c" },
   Sprint: { short: "SPR", icon: "flash_on", color: "#fb923c" },
   Qualifying: { short: "QUALI", icon: "speed", color: "#60a5fa" },
-  RACE: { short: "RACE", icon: "flag", color: "#e00700" },
+  RACE: { short: "RACE", icon: "flag", color: "#ff1500" },
 };
 
 function fmt(iso: string) {
@@ -126,7 +126,7 @@ export default function SessionSchedule({ sessions, raceDate, raceName }: Props)
                 </span>
                 <span
                   className="text-[10px] font-black uppercase tracking-wide"
-                  style={{ color: st?.isPast ? "#374151" : isRace ? "#e00700" : meta.color }}
+                  style={{ color: st?.isPast ? "#374151" : isRace ? "#ff1500" : meta.color }}
                 >
                   {meta.short}
                 </span>

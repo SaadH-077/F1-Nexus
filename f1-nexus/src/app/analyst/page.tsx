@@ -331,7 +331,7 @@ export default async function AnalystPage() {
                       <div className="relative w-16 h-16 flex items-center justify-center">
                         <svg className="w-full h-full -rotate-90">
                           <circle cx="32" cy="32" r="26" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
-                          <circle cx="32" cy="32" r="26" fill="transparent" stroke="#e00700" strokeWidth="4"
+                          <circle cx="32" cy="32" r="26" fill="transparent" stroke="#ff1500" strokeWidth="4"
                             strokeDasharray="163" strokeDashoffset={offset} strokeLinecap="round" />
                         </svg>
                         <span className="absolute text-[9px] font-black text-slate-300">{s.sector}</span>

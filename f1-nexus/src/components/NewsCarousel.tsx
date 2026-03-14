@@ -17,7 +17,7 @@ function timeSince(dateStr: string): string {
 }
 
 const SOURCE_COLORS: Record<string, string> = {
-  "Motorsport.com": "#e00700",
+  "Motorsport.com": "#ff1500",
   "The Race": "#f97316",
   "Autosport": "#3b82f6",
 };
@@ -102,7 +102,7 @@ export default function NewsCarousel({ articles }: Props) {
               {/* Source badge */}
               <div
                 className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest text-white"
-                style={{ backgroundColor: SOURCE_COLORS[a.source] ?? "#e00700" }}
+                style={{ backgroundColor: SOURCE_COLORS[a.source] ?? "#ff1500" }}
               >
                 {a.source}
               </div>
