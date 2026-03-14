@@ -28,7 +28,7 @@ RUN mkdir -p /app/data/cache
 COPY . .
 
 # Drop to non-root user for security
-RUN useradd -m appuser && chgrp -R 0 /app && chmod -R g=u /app
+RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000

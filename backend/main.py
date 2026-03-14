@@ -61,8 +61,3 @@ app.include_router(subscribers.router, prefix=settings.API_V1_STR)
 @app.get("/")
 def read_root():
     return {"message": "Welcome to F1 Nexus API"}
-
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
