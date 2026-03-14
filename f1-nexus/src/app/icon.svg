@@ -1,17 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Red rounded square background (matches navbar logo) -->
-  <rect width="32" height="32" rx="7" fill="#e00700"/>
-  <!-- Highlight gradient overlay -->
-  <rect width="32" height="16" rx="7" fill="rgba(255,255,255,0.15)"/>
-
-  <!-- Speedometer gauge arc (outer) -->
-  <path d="M7 20 A10 10 0 0 1 25 20" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-  <!-- Gauge tick marks -->
-  <line x1="7"  y1="20" x2="8.4" y2="17.6" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="16" y1="10" x2="16"  y2="11.8" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="25" y1="20" x2="23.6" y2="17.6" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-  <!-- Needle pointing upper-right (like a speedo at ~75%) -->
-  <line x1="16" y1="20" x2="22" y2="13" stroke="white" stroke-width="2" stroke-linecap="round"/>
-  <!-- Centre pivot dot -->
-  <circle cx="16" cy="20" r="2" fill="white"/>
+  <!-- Red rounded-2xl background -->
+  <rect width="32" height="32" rx="7" fill="#ff1500"/>
+  <!-- White gradient overlay (top-left highlight, matches from-white/20 to-transparent) -->
+  <defs>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#shine)"/>
+  <!-- Speedometer icon (Material Symbols "speed" approximation):
+       outer arc + two tick marks + needle + centre dot -->
+  <path d="M6.5 21 A10.5 10.5 0 0 1 25.5 21" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Left tick -->
+  <line x1="6.5"  y1="21"   x2="8.2"  y2="18.1" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Top tick -->
+  <line x1="16"   y1="10.5" x2="16"   y2="12.5"  stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Right tick -->
+  <line x1="25.5" y1="21"   x2="23.8" y2="18.1"  stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Needle pointing to ~70% (upper-right) -->
+  <line x1="16" y1="21" x2="22.5" y2="13.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Centre pivot -->
+  <circle cx="16" cy="21" r="2.2" fill="white"/>
 </svg>
