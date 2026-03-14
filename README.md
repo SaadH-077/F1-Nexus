@@ -142,12 +142,50 @@ Frontend runs at `http://localhost:3000`
 
 ### 4. Docker (full-stack)
 
+The entire stack — frontend, backend, and Ollama LLM — runs in containers orchestrated by Docker Compose.
+
 ```bash
-# From repo root
+# 1. Copy and configure the environment file
+cp .env.example .env
+# Edit .env with your SMTP credentials and desired settings
+
+# 2. Build and start all services
 docker-compose up --build
+
+# 3. On first run, pull the AI model into Ollama
+docker exec f1-nexus-ollama ollama pull llama3.2
 ```
 
-This starts the backend, frontend, and Ollama together.
+| Service | Container | Port |
+|---|---|---|
+| Next.js Frontend | `f1-nexus-frontend` | `3000` |
+| FastAPI Backend | `f1-nexus-backend` | `8000` |
+| Ollama (LLM) | `f1-nexus-ollama` | `11434` |
+
+**Useful Docker commands:**
+
+```bash
+# Run in background (detached)
+docker-compose up -d --build
+
+# View logs for a specific service
+docker-compose logs -f backend
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (full reset including cache and DB)
+docker-compose down -v
+
+# Rebuild a single service after a code change
+docker-compose up -d --build backend
+```
+
+**What's inside each image:**
+
+- **Backend** — Multi-stage Python 3.11-slim. Stage 1 compiles dependencies with gcc; Stage 2 copies only the installed packages (no build tools). Runs as a non-root user. FastF1 cache and the SQLite subscriber database are persisted in a named Docker volume.
+- **Frontend** — Multi-stage Node 20-alpine. Stage 1 installs deps, Stage 2 runs `next build` with `output: "standalone"`, Stage 3 copies only the self-contained bundle (~50 MB vs 500 MB full build). Runs as a non-root user.
+- **Ollama** — Official image with model weights stored in a named volume so they survive container restarts.
 
 ---
 
@@ -207,9 +245,26 @@ The scheduler runs as a background task inside the FastAPI process (no external 
 3. Set the start command: `uvicorn main:app --host 0.0.0.0 --port 8000`
 4. Add all environment variables from `.env.example`
 
-### Full-stack → Docker
+### Full-stack → Docker (VPS / Cloud VM)
 
-Use the provided `docker-compose.yml`. Update the `APP_URL` environment variable to your public domain.
+Deploy on any Linux server with Docker installed (DigitalOcean Droplet, AWS EC2, etc.):
+
+```bash
+# On your server
+git clone https://github.com/your-username/f1-nexus.git
+cd f1-nexus
+cp .env.example .env
+nano .env              # Set SMTP credentials and APP_URL to your domain
+
+docker-compose up -d --build
+
+# Pull the LLM (once)
+docker exec f1-nexus-ollama ollama pull llama3.2
+```
+
+Point your domain / reverse proxy (nginx, Caddy) at:
+- `localhost:3000` → frontend
+- `localhost:8000` → backend API
 
 ---
 
