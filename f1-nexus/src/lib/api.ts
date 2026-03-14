@@ -282,8 +282,9 @@ export async function getQualifyingResultsForRound(year: string, round: string):
 }
 
 export async function getSprintQualifyingResultsForRound(year: string, round: string): Promise<{ race: RaceInfo | null; results: QualifyingResult[] }> {
+  // Jolpica has no sprint_qualifying endpoint — derive SQ grid order from sprint race grid positions
   try {
-    const res = await fetch(`https://api.jolpi.ca/ergast/f1/${year}/${round}/sprint_qualifying.json`, {
+    const res = await fetch(`https://api.jolpi.ca/ergast/f1/${year}/${round}/sprint.json`, {
       next: { revalidate: 120 },
     });
     if (!res.ok) return { race: null, results: [] };
@@ -291,25 +292,36 @@ export async function getSprintQualifyingResultsForRound(year: string, round: st
       MRData?: { RaceTable?: { Races?: Array<{
         raceName: string; round: string; date: string;
         Circuit?: { circuitName: string; Location?: { locality: string; country: string } };
-        SprintQualifyingResults?: Array<{
+        SprintResults?: Array<{
           position: string;
+          grid?: string;
           Driver?: { code?: string; givenName: string; familyName: string };
           Constructor?: { name: string };
-          Q1?: string; Q2?: string; Q3?: string;
         }>;
       }> } };
     };
     const races = data?.MRData?.RaceTable?.Races ?? [];
-    if (!races.length || !races[0].SprintQualifyingResults?.length) return { race: null, results: [] };
+    if (!races.length || !races[0].SprintResults?.length) return { race: null, results: [] };
     const r = races[0];
+    // Sort by grid position (sprint starting grid = sprint qualifying result)
+    const sorted = [...r.SprintResults!].sort(
+      (a, b) => Number(a.grid ?? 99) - Number(b.grid ?? 99)
+    );
     return {
-      race: { name: `${r.raceName} · Sprint Qualifying`, circuit: r.Circuit?.circuitName ?? "", date: r.date, round: Number(r.round) },
-      results: r.SprintQualifyingResults!.map((q) => ({
-        position: Number(q.position),
-        driverCode: q.Driver?.code ?? "",
-        driverName: `${q.Driver?.givenName ?? ""} ${q.Driver?.familyName ?? ""}`.trim(),
-        constructor: q.Constructor?.name ?? "",
-        q1: q.Q1 ?? "", q2: q.Q2 ?? "", q3: q.Q3 ?? "",
+      race: {
+        name: `${r.raceName} · Sprint Qualifying`,
+        circuit: r.Circuit?.circuitName ?? "",
+        date: r.date,
+        round: Number(r.round),
+        locality: r.Circuit?.Location?.locality ?? "",
+        country: r.Circuit?.Location?.country ?? "",
+      },
+      results: sorted.map((s) => ({
+        position: Number(s.grid ?? 99),
+        driverCode: s.Driver?.code ?? "",
+        driverName: `${s.Driver?.givenName ?? ""} ${s.Driver?.familyName ?? ""}`.trim(),
+        constructor: s.Constructor?.name ?? "",
+        q1: "", q2: "", q3: "",
       })),
     };
   } catch { return { race: null, results: [] }; }

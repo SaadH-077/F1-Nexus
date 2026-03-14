@@ -54,7 +54,7 @@ const SESSION_LABELS: Record<string, { short: string; icon: string; color: strin
   FP1: { short: "FP1", icon: "timer", color: "#94a3b8" },
   FP2: { short: "FP2", icon: "timer", color: "#94a3b8" },
   FP3: { short: "FP3", icon: "timer", color: "#94a3b8" },
-  "Sprint Qualifying": { short: "SQ", icon: "speed", color: "#fb923c" },
+  "Sprint Qualifying": { short: "SQ", icon: "speed", color: "#f59e0b" },
   Sprint: { short: "SPR", icon: "flash_on", color: "#fb923c" },
   Qualifying: { short: "QUALI", icon: "speed", color: "#60a5fa" },
   RACE: { short: "RACE", icon: "flag", color: "#e00700" },
@@ -252,9 +252,9 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
               return (
                 <div className="border-t border-white/5 pt-3 pb-2">
                   <div className="flex items-center gap-2 px-3 mb-2">
-                    <span className="material-symbols-outlined text-[11px]" style={{ color: "#fb923c" }}>speed</span>
-                    <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#fb923c" }}>Sprint Qualifying</p>
-                    <span className="text-[8px] text-slate-700 ml-1">· determines sprint starting grid</span>
+                    <span className="material-symbols-outlined text-[11px]" style={{ color: "#f59e0b" }}>speed</span>
+                    <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#f59e0b" }}>Sprint Qualifying</p>
+                    <span className="text-[8px] text-slate-700 ml-1">· sprint race starting grid</span>
                   </div>
                   <div className="flex items-center gap-3 mx-3 mb-2 px-3 py-2.5 rounded-xl" style={{ background: `linear-gradient(90deg, ${poleColor}22 0%, rgba(255,255,255,0.03) 100%)`, border: `1px solid ${poleColor}33` }}>
                     <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: "rgba(234,179,8,0.2)", border: "1.5px solid rgba(234,179,8,0.5)" }}>
@@ -266,10 +266,11 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
                       <p className="text-[9px] font-bold uppercase truncate" style={{ color: poleColor }}>{pole.constructor.split(" ")[0]}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-[8px] text-slate-600 uppercase tracking-widest font-bold">Pole · SQ3</p>
-                      <p className="text-[11px] font-black tabular-nums text-orange-400">{pole.q3 || pole.q2 || pole.q1}</p>
+                      <p className="text-[8px] text-slate-600 uppercase tracking-widest font-bold">Sprint Pole</p>
+                      <p className="text-[11px] font-black tabular-nums" style={{ color: "#f59e0b" }}>P1</p>
                     </div>
                   </div>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-700 px-3 mb-1.5">Sprint Starting Grid</p>
                   <div className="grid grid-cols-2">
                     {sprintQualResults.slice(1, 10).map((q) => {
                       const qColor = teamColor(constructorIdFromName(q.constructor));
@@ -278,7 +279,7 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
                           <span className={`text-[10px] font-black w-5 text-center flex-shrink-0 tabular-nums ${q.position <= 3 ? "text-orange-400" : "text-slate-600"}`}>P{q.position}</span>
                           <img src={driverPhotoUrl(q.driverCode)} alt={q.driverName} className="w-5 h-5 rounded-full object-cover object-top flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${qColor}` }} />
                           <span className="flex-1 text-[10px] font-black italic uppercase truncate text-slate-200">{q.driverName.split(" ").slice(-1)[0]}</span>
-                          <span className="text-[9px] font-mono text-slate-500 tabular-nums flex-shrink-0">{q.q3 || q.q2 || q.q1}</span>
+                          <span className="text-[9px] font-bold uppercase text-slate-600 flex-shrink-0" style={{ color: qColor }}>{q.constructor.split(" ")[0]}</span>
                         </div>
                       );
                     })}
