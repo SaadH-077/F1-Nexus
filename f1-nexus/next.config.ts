@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Produces a minimal self-contained build for Docker
-  output: "standalone",
+  // "standalone" is only needed for self-hosted Docker builds.
+  // Vercel manages its own output format, so we skip this there.
+  ...(process.env.DOCKER_BUILD === "true" && { output: "standalone" }),
 };
 
 export default nextConfig;

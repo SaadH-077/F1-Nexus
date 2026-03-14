@@ -19,11 +19,12 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source
 COPY . .
 
-# Build argument injected at build time by docker-compose / CI
+# Build arguments injected at build time by docker-compose / CI
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
-# Produce a standalone Next.js output (smallest possible image)
+# Tell next.config.ts to use standalone output (Docker only, not Vercel)
+ENV DOCKER_BUILD=true
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
