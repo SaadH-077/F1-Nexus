@@ -83,76 +83,50 @@ export default async function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 pt-4 pb-24 space-y-6">
 
-      {/* ── Championship Leader Bar ── */}
-      <div className="flex items-center gap-4 px-5 py-3 bg-card-dark border border-border-dark rounded-xl overflow-x-auto">
-        {championDriver && (
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div
-              className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2"
-              style={{ boxShadow: `0 0 0 2px ${championTeamColor}` }}
-            >
-              <img
-                src={driverPhotoUrl(championDriver.driver.code)}
-                alt={championDriver.driver.name}
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-            <div>
-              <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Championship Leader</p>
-              <p className="text-sm font-black italic uppercase leading-tight" style={{ color: championTeamColor }}>
-                {championDriver.driver.name.split(" ").slice(-1)[0]}
-                <span className="text-slate-400 ml-2 font-bold not-italic text-xs">{championDriver.points} pts</span>
-              </p>
-            </div>
-          </div>
-        )}
+      {/* ── News Ticker ── */}
+      {(() => {
+        const tickerItems: string[] = [];
+        if (lastRace?.name && lastResults[0])
+          tickerItems.push(`${lastRace.name.toUpperCase()} WINNER: ${lastResults[0].driverName.toUpperCase()} (${lastResults[0].constructor.toUpperCase()})`);
+        if (championDriver)
+          tickerItems.push(`WDC LEADER: ${championDriver.driver.name.toUpperCase()} — ${championDriver.points} PTS`);
+        if (constructors[0])
+          tickerItems.push(`WCC LEADER: ${constructors[0].constructor.name.toUpperCase()} — ${constructors[0].points} PTS`);
+        if (currentSprintRace?.name && currentSprintResults[0])
+          tickerItems.push(`SPRINT WINNER: ${currentSprintResults[0].driverName.toUpperCase()} · ${currentSprintRace.name.replace(" · Sprint", "").toUpperCase()}`);
+        if (nextRace)
+          tickerItems.push(`NEXT RACE: ${nextRace.raceName.toUpperCase()} · ROUND ${nextRace.round} · ${nextRace.locality.toUpperCase()}`);
+        newsArticles.slice(0, 6).forEach((a) => tickerItems.push(a.title.toUpperCase()));
+        const items = tickerItems.length > 0 ? tickerItems : ["2026 FORMULA 1 WORLD CHAMPIONSHIP — SEASON UNDERWAY"];
+        const allItems = [...items, ...items]; // duplicate for seamless loop
 
-        <div className="w-px h-8 bg-border-dark flex-shrink-0" />
-
-        {lastRace?.name && lastResults[0] && (
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <span className="material-symbols-outlined text-primary text-lg">flag</span>
-            <div>
-              <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Last Race Winner</p>
-              <p className="text-sm font-black italic uppercase leading-tight">
-                {lastResults[0].driverName.split(" ").slice(-1)[0]}
-                <span className="text-slate-400 ml-2 font-normal text-xs not-italic">{lastRace.name}</span>
-              </p>
+        return (
+          <div className="relative flex items-center bg-card-dark border border-border-dark rounded-xl overflow-hidden" style={{ height: 44 }}>
+            <style>{`
+              @keyframes f1ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+              .f1-ticker { animation: f1ticker ${Math.max(30, items.length * 8)}s linear infinite; }
+              .f1-ticker:hover { animation-play-state: paused; }
+            `}</style>
+            {/* Label */}
+            <div className="flex-shrink-0 flex items-center gap-1.5 px-3 h-full z-10" style={{ background: "#e00700" }}>
+              <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>campaign</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-white">F1 News</span>
             </div>
-          </div>
-        )}
-
-        {currentSprintRace?.name && currentSprintResults[0] && (
-          <>
-            <div className="w-px h-8 bg-border-dark flex-shrink-0" />
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="material-symbols-outlined text-orange-400 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>flash_on</span>
-              <div>
-                <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Sprint Winner</p>
-                <p className="text-sm font-black italic uppercase leading-tight">
-                  {currentSprintResults[0].driverName.split(" ").slice(-1)[0]}
-                  <span className="text-slate-400 ml-2 font-normal text-xs not-italic">{currentSprintRace.name.replace(" · Sprint", "")}</span>
-                </p>
+            <div className="w-px h-full flex-shrink-0 z-10" style={{ background: "rgba(255,255,255,0.08)" }} />
+            {/* Scrolling strip */}
+            <div className="flex-1 overflow-hidden">
+              <div className="f1-ticker flex items-center whitespace-nowrap">
+                {allItems.map((text, i) => (
+                  <span key={i} className="inline-flex items-center">
+                    <span className="text-[11px] font-black uppercase tracking-wide text-white px-5">{text}</span>
+                    <span className="text-[8px]" style={{ color: "#e00700" }}>◆</span>
+                  </span>
+                ))}
               </div>
             </div>
-          </>
-        )}
-
-        <div className="w-px h-8 bg-border-dark flex-shrink-0" />
-
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="material-symbols-outlined text-slate-500 text-lg">calendar_month</span>
-          <div>
-            <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Season</p>
-            <p className="text-sm font-black italic uppercase">
-              2026
-              <span className="text-slate-400 ml-2 font-normal text-xs not-italic">
-                Round {nextRace?.round ?? "—"}
-              </span>
-            </p>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* ── HERO: Next Race ── */}
       <section className="relative rounded-2xl overflow-hidden border border-border-dark">
