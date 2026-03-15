@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SessionInfo, QualifyingResult, RaceResult } from "@/lib/api";
 import { driverPhotoUrl, teamColor, constructorIdFromName } from "@/lib/api";
@@ -159,10 +160,19 @@ export default function SessionSchedule({ sessions, raceDate, raceName, qualifyi
 
               {/* Countdown boxes, status, or View Results */}
               {st?.isLive ? (
-                <div className="flex items-center gap-1 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping flex-shrink-0" />
                   <span className="text-[10px] font-black text-primary animate-pulse uppercase tracking-widest">
                     Live Now
                   </span>
+                  <Link
+                    href="/live"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
+                    style={{ background: "rgba(224,7,0,0.18)", color: "#e00700", border: "1px solid rgba(224,7,0,0.4)" }}
+                  >
+                    <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>sensors</span>
+                    Watch Live
+                  </Link>
                 </div>
               ) : hasBtn ? (
                 <button

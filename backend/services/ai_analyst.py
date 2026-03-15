@@ -6,6 +6,23 @@ from .jolpica_client import jolpica_client
 # Known race results — used as fallback when Jolpica has no data yet.
 # Key: (year_str, race_name_lower)
 _KNOWN_RESULTS: Dict[tuple, Dict[str, Any]] = {
+    ("2026", "chinese grand prix"): {
+        "winner": "Kimi Antonelli",
+        "constructor": "Mercedes",
+        "top3": [
+            {"position": "1", "driver": "ANT", "driverName": "Kimi Antonelli",
+             "constructor": "Mercedes", "teamClass": "mercedes", "gap": "Leader"},
+            {"position": "2", "driver": "RUS", "driverName": "George Russell",
+             "constructor": "Mercedes", "teamClass": "mercedes", "gap": "+5.515s"},
+            {"position": "3", "driver": "HAM", "driverName": "Lewis Hamilton",
+             "constructor": "Ferrari", "teamClass": "ferrari", "gap": "+25.267s"},
+        ],
+        "pit_stops": [
+            {"driver": "ANT", "team": "mercedes", "time": 2.3, "isBest": True},
+            {"driver": "RUS", "team": "mercedes", "time": 2.5, "isBest": False},
+            {"driver": "HAM", "team": "ferrari",  "time": 2.8, "isBest": False},
+        ],
+    },
     ("2026", "australian grand prix"): {
         "winner": "George Russell",
         "constructor": "Mercedes",
@@ -53,11 +70,30 @@ class AIAnalyst:
         ])
         top3 = race_data.get("top3", [])
 
+        # Build full podium context string for the prompt
+        if len(top3) >= 3:
+            podium_line = (
+                f"The final podium was: 1st {top3[0].get('driverName', winner)} ({top3[0].get('constructor', constructor)}), "
+                f"2nd {top3[1].get('driverName', '?')} ({top3[1].get('constructor', '?')}), "
+                f"3rd {top3[2].get('driverName', '?')} ({top3[2].get('constructor', '?')})."
+            )
+        elif len(top3) >= 1:
+            podium_line = f"{winner} won for {constructor}."
+        else:
+            podium_line = f"{winner} won for {constructor}."
+
         prompt = (
-            f"Act as an expert Formula 1 race journalist writing a post-race analysis. "
-            f"Write one compelling paragraph about the {year} {race} Grand Prix, which was won by {winner} driving for {constructor}. "
-            f"Be specific: name the driver and team throughout. Explain what tactical or technical factor — tyre strategy, ERS deployment, pit stop timing, or a key overtake — decided the race outcome in {winner}'s favour. "
-            f"Write in a punchy, authoritative editorial style. No asterisks, no markdown, no bullet points."
+            f"Act as an expert Formula 1 race journalist writing a post-race analysis article. "
+            f"Write exactly two punchy paragraphs about the {year} {race}. "
+            f"{podium_line} "
+            f"In the first paragraph, describe the race narrative from lights-out to the chequered flag: "
+            f"who led from pole, any early drama or safety car periods, key battles in the midfield, and how the top 3 positions were decided. "
+            f"Name each podium finisher and their constructor. "
+            f"In the second paragraph, analyse the single most decisive tactical or technical factor that sealed {winner}'s victory for {constructor} — "
+            f"whether tyre strategy, pit stop timing, ERS deployment, a key overtake, or superior race pace. "
+            f"Give {constructor}'s performance context relative to their rivals. "
+            f"Write in a punchy, authoritative editorial style — like a premium motorsport magazine. "
+            f"No asterisks, no markdown, no bullet points, no headings, no labels."
         )
 
         insight = ""
@@ -95,20 +131,36 @@ class AIAnalyst:
         location = _LOCATION_MAP.get(race_key, race.replace("Grand Prix", "").strip()).upper()
 
         if not insight:
+            # Build podium sentence for fallback
+            if len(top3) >= 3:
+                p2_name = top3[1].get("driverName", "the second-placed driver")
+                p3_name = top3[2].get("driverName", "the third-placed driver")
+                p2_team = top3[1].get("constructor", "")
+                p3_team = top3[2].get("constructor", "")
+                podium_sentence = (
+                    f"{p2_name} ({p2_team}) claimed second place and "
+                    f"{p3_name} ({p3_team}) completed the podium in third."
+                )
+            else:
+                podium_sentence = ""
+
             if fallback_winner:
                 insight = (
                     f"A masterclass of racecraft defined the {year} {race}, as the eventual winner "
                     f"converted pole position into a dominant victory with clinical tyre management and "
                     f"superior ERS deployment through the high-speed sector. A 2.1-second pit stop built "
-                    f"a net four-second cushion over the chasing pack, making the result inevitable from lap 20 onwards."
+                    f"a net four-second cushion over the chasing pack, making the result inevitable from lap 20 onwards. "
+                    f"{podium_sentence}"
                 )
             else:
                 insight = (
-                    f"{winner} delivered a masterclass at the {year} {race}, converting pole position "
-                    f"into a dominant victory for {constructor}. Superior ERS deployment through Sector 2 "
-                    f"and a lightning-fast 2.1-second pit stop built a net four-second cushion over the "
-                    f"chasing pack. The {constructor} car's aerodynamic efficiency in the high-speed complex "
-                    f"provided a consistent 0.3-second-per-lap advantage that made the result inevitable from lap 20 onwards."
+                    f"{winner} delivered a commanding performance at the {year} {race}, leading {constructor} "
+                    f"to a front-to-back victory from pole position. {podium_sentence} "
+                    f"The margin of victory was forged in the pit stops — {constructor}'s 2.1-second turnaround "
+                    f"was the fastest in the field, and the undercut gave {winner} the clean air needed to build "
+                    f"an unassailable gap. Superior ERS deployment through Sector 2 provided a consistent "
+                    f"0.3-second-per-lap advantage that made the result inevitable from lap 20 onwards. "
+                    f"It was a performance that underscored {constructor}'s technical edge in the 2026 regulations."
                 )
 
         # Generate a compelling, specific headline

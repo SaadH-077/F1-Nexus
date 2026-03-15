@@ -98,28 +98,12 @@ export default function PredictorPage() {
             onChange={(e) => setSelectedRace(e.target.value)}
           >
             {schedule.map((r) => (
-              <option key={r.round} value={r.raceName} className="bg-[#111]">
-                R{r.round} — {r.raceName}
+              <option key={r.raceName} value={r.raceName} className="bg-[#111]">
+                {r.round ? `R${r.round} — ` : ""}{r.raceName}
               </option>
             ))}
           </select>
         </div>
-      </div>
-
-      {/* ── Model accuracy KPIs ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {MODEL_METRICS.map((m) => (
-          <div key={m.label} className="bg-card-dark border border-border-dark rounded-xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: m.color + "18", border: `1px solid ${m.color}30` }}>
-              <span className="material-symbols-outlined text-base" style={{ color: m.color }}>{m.icon}</span>
-            </div>
-            <div>
-              <p className="text-lg font-black text-white leading-none">{m.value}</p>
-              <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mt-0.5">{m.label}</p>
-              <p className="text-[8px] text-slate-700">{m.sub}</p>
-            </div>
-          </div>
-        ))}
       </div>
 
       {/* ── Main content ── */}

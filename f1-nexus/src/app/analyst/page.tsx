@@ -92,31 +92,33 @@ export default async function AnalystPage() {
 
   const coverImage = circuitImage(raceName);
   const today = fmtDate(new Date().toISOString());
-  const totalLaps = 58;
+  const totalLaps = 56;
 
-  // All 20 drivers — 2026 Australian GP approximate data
+  // All 22 drivers — 2026 Chinese GP (Shanghai, 15 March 2026)
   // isP2: second driver of team → dashed line for visual distinction
   const allDrivers = [
-    { code: "RUS", teamClass: "mercedes",     gridPos:  1, finalPos:  1, pitLap: 12, isP2: false, isDnf: false },
-    { code: "ANT", teamClass: "mercedes",     gridPos:  3, finalPos:  2, pitLap: 12, isP2: true,  isDnf: false },
-    { code: "LEC", teamClass: "ferrari",      gridPos:  2, finalPos:  3, pitLap: 25, isP2: false, isDnf: false },
-    { code: "HAM", teamClass: "ferrari",      gridPos:  4, finalPos:  4, pitLap: 28, isP2: true,  isDnf: false },
-    { code: "NOR", teamClass: "mclaren",      gridPos:  5, finalPos:  5, pitLap: 20, isP2: false, isDnf: false },
-    { code: "ALO", teamClass: "aston_martin", gridPos:  7, finalPos:  6, pitLap: 18, isP2: false, isDnf: false },
-    { code: "SAI", teamClass: "williams",     gridPos:  8, finalPos:  7, pitLap: 22, isP2: false, isDnf: false },
-    { code: "GAS", teamClass: "alpine",       gridPos: 10, finalPos:  8, pitLap: 16, isP2: false, isDnf: false },
-    { code: "OCO", teamClass: "alpine",       gridPos:  9, finalPos:  9, pitLap: 15, isP2: true,  isDnf: false },
-    { code: "STR", teamClass: "aston_martin", gridPos: 11, finalPos: 10, pitLap: 19, isP2: true,  isDnf: false },
-    { code: "TSU", teamClass: "rb",           gridPos: 12, finalPos: 11, pitLap: 17, isP2: false, isDnf: false },
-    { code: "LAW", teamClass: "rb",           gridPos: 13, finalPos: 12, pitLap: 18, isP2: true,  isDnf: false },
-    { code: "ALB", teamClass: "williams",     gridPos: 14, finalPos: 13, pitLap: 21, isP2: true,  isDnf: false },
-    { code: "MAG", teamClass: "haas",         gridPos: 15, finalPos: 14, pitLap: 16, isP2: false, isDnf: false },
-    { code: "BEA", teamClass: "haas",         gridPos: 16, finalPos: 15, pitLap: 17, isP2: true,  isDnf: false },
-    { code: "HUL", teamClass: "sauber",       gridPos: 17, finalPos: 16, pitLap: 20, isP2: false, isDnf: false },
-    { code: "BOR", teamClass: "sauber",       gridPos: 18, finalPos: 17, pitLap: 19, isP2: true,  isDnf: false },
-    { code: "DOO", teamClass: "alpine",       gridPos: 20, finalPos: 18, pitLap: 15, isP2: false, isDnf: false },
-    { code: "COL", teamClass: "williams",     gridPos: 19, finalPos: 19, pitLap: 23, isP2: false, isDnf: false },
-    { code: "PIA", teamClass: "mclaren",      gridPos:  6, finalPos: 20, pitLap:  1, isP2: true,  isDnf: true  },
+    { code: "ANT", teamClass: "mercedes",     gridPos:  1, finalPos:  1, pitLap: 20, isP2: true,  isDnf: false },
+    { code: "RUS", teamClass: "mercedes",     gridPos:  2, finalPos:  2, pitLap: 21, isP2: false, isDnf: false },
+    { code: "HAM", teamClass: "ferrari",      gridPos:  3, finalPos:  3, pitLap: 20, isP2: true,  isDnf: false },
+    { code: "LEC", teamClass: "ferrari",      gridPos:  4, finalPos:  4, pitLap: 22, isP2: false, isDnf: false },
+    { code: "PIA", teamClass: "mclaren",      gridPos:  5, finalPos: 20, pitLap:  1, isP2: true,  isDnf: true  },
+    { code: "NOR", teamClass: "mclaren",      gridPos:  6, finalPos: 20, pitLap:  1, isP2: false, isDnf: true  },
+    { code: "GAS", teamClass: "alpine",       gridPos:  7, finalPos:  6, pitLap: 18, isP2: false, isDnf: false },
+    { code: "VER", teamClass: "red_bull",     gridPos:  8, finalPos: 20, pitLap: 42, isP2: false, isDnf: true  },
+    { code: "HAD", teamClass: "red_bull",     gridPos:  9, finalPos:  8, pitLap: 17, isP2: true,  isDnf: false },
+    { code: "BEA", teamClass: "haas",         gridPos: 10, finalPos:  5, pitLap: 26, isP2: true,  isDnf: false },
+    { code: "ALO", teamClass: "aston_martin", gridPos: 11, finalPos: 20, pitLap: 28, isP2: false, isDnf: true  },
+    { code: "STR", teamClass: "aston_martin", gridPos: 12, finalPos: 20, pitLap: 22, isP2: true,  isDnf: true  },
+    { code: "LAW", teamClass: "rb",           gridPos: 13, finalPos:  7, pitLap: 19, isP2: false, isDnf: false },
+    { code: "SAI", teamClass: "williams",     gridPos: 14, finalPos:  9, pitLap: 20, isP2: false, isDnf: false },
+    { code: "COL", teamClass: "alpine",       gridPos: 15, finalPos: 10, pitLap: 21, isP2: true,  isDnf: false },
+    { code: "OCO", teamClass: "haas",         gridPos: 16, finalPos: 11, pitLap: 18, isP2: false, isDnf: false },
+    { code: "LIN", teamClass: "rb",           gridPos: 17, finalPos: 12, pitLap: 20, isP2: true,  isDnf: false },
+    { code: "HUL", teamClass: "sauber",       gridPos: 18, finalPos: 13, pitLap: 19, isP2: false, isDnf: false },
+    { code: "BOR", teamClass: "sauber",       gridPos: 19, finalPos: 20, pitLap:  1, isP2: true,  isDnf: true  },
+    { code: "BOT", teamClass: "cadillac",     gridPos: 20, finalPos: 14, pitLap: 22, isP2: false, isDnf: false },
+    { code: "PER", teamClass: "cadillac",     gridPos: 20, finalPos: 15, pitLap: 23, isP2: true,  isDnf: false },
+    { code: "ALB", teamClass: "williams",     gridPos: 20, finalPos: 20, pitLap:  1, isP2: true,  isDnf: true  },
   ];
 
   const posTraces = allDrivers.map((d) =>
@@ -126,7 +128,7 @@ export default async function AnalystPage() {
   // SVG position chart config — P1–P20
   const CHART_W = 1000;
   const CHART_H = 480;
-  const POS_MAX = 20;
+  const POS_MAX = 22;
   const CHART_PAD_L = 28;
   const CHART_PAD_R = 8;
   const CHART_PAD_T = 8;
@@ -387,7 +389,7 @@ export default async function AnalystPage() {
               style={{ display: "block", minHeight: 340 }}
             >
               {/* Horizontal grid lines P1–P20 */}
-              {Array.from({ length: 20 }, (_, i) => i + 1).map((pos) => (
+              {Array.from({ length: 22 }, (_, i) => i + 1).map((pos) => (
                 <line key={pos}
                   x1={CHART_PAD_L} y1={yForPos(pos)} x2={CHART_W - CHART_PAD_R} y2={yForPos(pos)}
                   stroke={pos % 5 === 0 ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.025)"}
@@ -401,7 +403,7 @@ export default async function AnalystPage() {
               ))}
 
               {/* Y-axis labels */}
-              {[1, 5, 10, 15, 20].map((pos) => (
+              {[1, 5, 10, 15, 20, 22].map((pos) => (
                 <text key={pos}
                   x={CHART_PAD_L - 4} y={yForPos(pos) + 3}
                   textAnchor="end" fontSize="9" fill="rgba(100,116,139,0.9)" fontFamily="monospace" fontWeight="700">
