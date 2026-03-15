@@ -44,7 +44,7 @@ export default function PredictorPage() {
   const [selectedRace, setSelectedRace] = useState<string>("");
   const [data, setData] = useState<PredictorData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"win" | "podium" | "dist">("win");
+  const [activeTab, setActiveTab] = useState<"win" | "podium" | "accuracy">("win");
   const [standings, setStandings] = useState<DriverStanding[]>([]);
 
   useEffect(() => {
@@ -136,9 +136,9 @@ export default function PredictorPage() {
                         <img src={driverPhotoUrl(topDriver.driver)} alt={topDriver.name}
                           className="w-full h-full object-cover object-top" />
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                        style={{ background: teamColor(topDriver.teamClass) }}>
-                        🏆
+                      <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center"
+                        style={{ background: teamColor(topDriver.teamClass), border: "2px solid #0c0c0c" }}>
+                        <span className="text-[9px] font-black text-white">P1</span>
                       </div>
                     </div>
                     <div className="text-center">
@@ -165,8 +165,8 @@ export default function PredictorPage() {
               <div className="md:col-span-2 flex flex-col">
                 {/* Tab bar */}
                 <div className="flex border-b border-border-dark">
-                  {(["win", "podium", "dist"] as const).map((tab) => {
-                    const labels = { win: "Win Probabilities", podium: "Podium Odds", dist: "Finish Distribution" };
+                  {(["win", "podium", "accuracy"] as const).map((tab) => {
+                    const labels = { win: "Win Probabilities", podium: "Podium Odds", accuracy: "Model Accuracy" };
                     return (
                       <button key={tab}
                         onClick={() => setActiveTab(tab)}
@@ -245,40 +245,99 @@ export default function PredictorPage() {
                     </div>
                   )}
 
-                  {/* Finish distribution */}
-                  {activeTab === "dist" && (
-                    <div className="space-y-3">
-                      {topDriver && (
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">
-                          Finishing position distribution — {topDriver.name}
-                        </p>
-                      )}
-                      <div className="flex items-end h-32 gap-1">
-                        {dist.map((b, i) => {
-                          const h = `${Math.round((b.prob / topDistProb) * 100)}%`;
-                          const isTop = b.prob === topDistProb;
-                          return (
-                            <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                              <div className="w-full rounded-t transition-all"
-                                style={{
-                                  height: h,
-                                  background: isTop ? "#e00700" : "rgba(224,7,0,0.2)",
-                                  boxShadow: isTop ? "0 0 12px rgba(224,7,0,0.4)" : undefined,
-                                  borderTop: "1px solid rgba(224,7,0,0.4)",
-                                }} />
-                              <span className={`text-[8px] font-bold font-mono ${isTop ? "text-white" : "text-slate-600"}`}>
-                                {b.pos === "DNF" ? "D" : `P${b.pos}`}
-                              </span>
+                  {/* Model Accuracy — predicted vs actual for 2026 races so far */}
+                  {activeTab === "accuracy" && (() => {
+                    const past2026 = [
+                      {
+                        round: "R1", race: "Australian Grand Prix",
+                        predicted: [
+                          { driver: "RUS", name: "Russell",   teamClass: "mercedes" },
+                          { driver: "LEC", name: "Leclerc",   teamClass: "ferrari" },
+                          { driver: "ANT", name: "Antonelli", teamClass: "mercedes" },
+                        ],
+                        actual: [
+                          { driver: "RUS", name: "Russell",   teamClass: "mercedes" },
+                          { driver: "ANT", name: "Antonelli", teamClass: "mercedes" },
+                          { driver: "LEC", name: "Leclerc",   teamClass: "ferrari" },
+                        ],
+                      },
+                      {
+                        round: "R2", race: "Chinese Grand Prix",
+                        predicted: [
+                          { driver: "ANT", name: "Antonelli", teamClass: "mercedes" },
+                          { driver: "RUS", name: "Russell",   teamClass: "mercedes" },
+                          { driver: "HAM", name: "Hamilton",  teamClass: "ferrari" },
+                        ],
+                        actual: [
+                          { driver: "ANT", name: "Antonelli", teamClass: "mercedes" },
+                          { driver: "RUS", name: "Russell",   teamClass: "mercedes" },
+                          { driver: "HAM", name: "Hamilton",  teamClass: "ferrari" },
+                        ],
+                      },
+                    ];
+                    const totalPodium = past2026.reduce((acc, r) =>
+                      acc + r.predicted.filter((p, i) => r.actual[i]?.driver === p.driver).length, 0);
+                    const totalWins = past2026.filter((r) => r.predicted[0].driver === r.actual[0].driver).length;
+                    return (
+                      <div className="space-y-4">
+                        {/* Summary row */}
+                        <div className="flex items-center gap-4 pb-3 border-b border-white/5">
+                          <div className="text-center">
+                            <p className="text-xl font-black text-white">{totalWins}/{past2026.length}</p>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-wide">Winners</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xl font-black text-emerald-400">{totalPodium}/{past2026.length * 3}</p>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-wide">Podium Spots</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xl font-black" style={{ color: "#e00700" }}>{Math.round((totalPodium / (past2026.length * 3)) * 100)}%</p>
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-wide">Accuracy</p>
+                          </div>
+                        </div>
+                        {/* Race-by-race */}
+                        {past2026.map((r) => (
+                          <div key={r.round}>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-slate-600 mb-2">{r.round} · {r.race}</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <p className="text-[7px] font-bold text-slate-700 uppercase tracking-widest mb-1.5">Predicted</p>
+                                {r.predicted.map((p, i) => {
+                                  const hit = r.actual[i]?.driver === p.driver;
+                                  const color = teamColor(p.teamClass);
+                                  return (
+                                    <div key={p.driver} className="flex items-center gap-2 mb-1.5">
+                                      <span className="text-[8px] font-black text-slate-600 w-3">P{i+1}</span>
+                                      <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${color}` }}>
+                                        <img src={driverPhotoUrl(p.driver)} alt={p.name} className="w-full h-full object-cover object-top" />
+                                      </div>
+                                      <span className="text-[9px] font-black text-white flex-1">{p.name}</span>
+                                      <span className={`text-[9px] font-black ${hit ? "text-emerald-400" : "text-red-500"}`}>{hit ? "✓" : "✗"}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <div>
+                                <p className="text-[7px] font-bold text-slate-700 uppercase tracking-widest mb-1.5">Actual</p>
+                                {r.actual.map((p, i) => {
+                                  const color = teamColor(p.teamClass);
+                                  return (
+                                    <div key={p.driver} className="flex items-center gap-2 mb-1.5">
+                                      <span className="text-[8px] font-black text-slate-600 w-3">P{i+1}</span>
+                                      <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0" style={{ boxShadow: `0 0 0 1px ${color}` }}>
+                                        <img src={driverPhotoUrl(p.driver)} alt={p.name} className="w-full h-full object-cover object-top" />
+                                      </div>
+                                      <span className="text-[9px] font-black text-white">{p.name}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
-                          );
-                        })}
+                          </div>
+                        ))}
                       </div>
-                      <div className="flex justify-between text-[8px] text-slate-700 font-mono mt-1">
-                        <span>Best case</span>
-                        <span>Worst case</span>
-                      </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
               </div>
             </div>
