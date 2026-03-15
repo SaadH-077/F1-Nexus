@@ -104,7 +104,7 @@ export default async function HomePage() {
           <div className="relative flex items-center bg-card-dark border border-border-dark rounded-xl overflow-hidden" style={{ height: 44 }}>
             <style>{`
               @keyframes f1ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-              .f1-ticker { animation: f1ticker ${Math.max(10, items.length * 2.5)}s linear infinite; }
+              .f1-ticker { animation: f1ticker ${Math.max(6, items.length * 1.2)}s linear infinite; }
               .f1-ticker:hover { animation-play-state: paused; }
             `}</style>
             {/* Label */}
