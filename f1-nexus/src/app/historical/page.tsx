@@ -49,7 +49,7 @@ const COMP_METRICS = [
 ];
 
 const ALL_TIME_DRIVERS = [
-  { name: "Lewis Hamilton",     team: "Mercedes",       color: "#27F4D2", ch: 7, wins: 103, poles: 104, podiums: 197, era: "2007–2025" },
+  { name: "Lewis Hamilton",     team: "Ferrari",        color: "#E80020", ch: 7, wins: 105, poles: 104, podiums: 200, era: "2007–pres" },
   { name: "Michael Schumacher", team: "Ferrari",        color: "#E80020", ch: 7, wins:  91, poles:  68, podiums: 155, era: "1991–2012" },
   { name: "Max Verstappen",     team: "Red Bull",       color: "#3671C6", ch: 4, wins:  63, poles:  40, podiums: 113, era: "2015–pres" },
   { name: "Sebastian Vettel",   team: "Red Bull",       color: "#3671C6", ch: 4, wins:  53, poles:  57, podiums: 122, era: "2007–2022" },
@@ -161,7 +161,7 @@ const RACE_ARCHIVE = [
 
 const LEGENDS = [
   {
-    name: "LEWIS HAMILTON", country: "United Kingdom", titles: 7, wins: 103, years: "2007–2025",
+    name: "LEWIS HAMILTON", country: "United Kingdom", titles: 7, wins: 105, years: "2007–pres",
     quote: "Still I rise. The battle is never over. I want to inspire a generation.",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdC1xS9ZspEfYYu31h5ZBxYdJ3Td7Exi499RuuX-foURWTolo-EylYiFiNnmmCwmPbaHFStqdtL4Ma0IjTiqnTqMTkF9VDStAvirGms9FZ-Xr3TLCKkDios3ImFxDsVi3udTXHC_ArxAUqMMqzYsoJZr0lnnd93M9EZCesed_YOC9dCYHpyId5QWlabpP1CMHYR4-Z1bgmO8G5mJT747fCh2D_dcSI5QNe57gYgAXKldxUEaOjAmkTAssRybVa2OJ6sTGLRRyK2u0S",
   },
