@@ -99,14 +99,16 @@ export default async function HomePage() {
         newsArticles.slice(0, 6).forEach((a) => tickerItems.push(a.title.toUpperCase()));
         const items = tickerItems.length > 0 ? tickerItems : ["2026 FORMULA 1 WORLD CHAMPIONSHIP — SEASON UNDERWAY"];
         const allItems = [...items, ...items];
-        const dur = Math.max(3, items.length * 0.27);
+        const desktopDur = Math.max(3, items.length * 0.27);
+        const mobileDur  = Math.max(12, items.length * 1.5);
 
         return (
           <div className="relative flex items-center bg-card-dark border border-border-dark rounded-xl overflow-hidden" style={{ height: 44 }}>
             <style>{`
               @keyframes f1ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-              .f1-ticker { animation: f1ticker ${dur}s linear infinite; }
+              .f1-ticker { animation: f1ticker ${desktopDur}s linear infinite; }
               .f1-ticker:hover { animation-play-state: paused; }
+              @media (max-width: 640px) { .f1-ticker { animation-duration: ${mobileDur}s; } }
             `}</style>
             {/* Label */}
             <div className="flex-shrink-0 flex items-center gap-1.5 px-3 h-full z-10" style={{ background: "#e00700" }}>
