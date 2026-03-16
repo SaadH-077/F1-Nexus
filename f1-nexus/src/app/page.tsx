@@ -99,7 +99,7 @@ export default async function HomePage() {
         newsArticles.slice(0, 6).forEach((a) => tickerItems.push(a.title.toUpperCase()));
         const items = tickerItems.length > 0 ? tickerItems : ["2026 FORMULA 1 WORLD CHAMPIONSHIP — SEASON UNDERWAY"];
         const allItems = [...items, ...items];
-        const dur = Math.max(18, items.length * 1.5);
+        const dur = Math.max(10, items.length * 0.8);
 
         return (
           <div className="relative flex items-center bg-card-dark border border-border-dark rounded-xl overflow-hidden" style={{ height: 44 }}>
