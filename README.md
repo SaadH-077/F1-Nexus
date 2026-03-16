@@ -1,8 +1,8 @@
-# F1 Nexus
+# F1 Nexus — Full Stack Analytics App
 
-![F1 Nexus App Preview](App%20Design/93shots_so.png)
+![F1 Nexus App Preview](App%20Design/Promotions/93shots_so.png)
 
-![F1 Nexus App Preview 2](App%20Design/731shots_so.png)
+![F1 Nexus App Preview 2](App%20Design/Promotions/731shots_so.png)
 
 A full-stack Formula 1 analytics platform featuring live standings, race results, telemetry visualisation, race predictions, strategy simulation, AI-generated race analysis, and session email reminders.
 
@@ -44,7 +44,7 @@ A full-stack Formula 1 analytics platform featuring live standings, race results
 ## Project Structure
 
 ```
-AntiGravity-Test/
+F1-Nexus Full Stack Analytics App/
 ├── backend/                    # FastAPI backend
 │   ├── main.py                 # App entry point + scheduler
 │   ├── config.py               # Settings (reads .env)
@@ -104,7 +104,7 @@ AntiGravity-Test/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/f1-nexus.git
+git clone https://github.com/SaadH-077/F1-Nexus.git
 cd f1-nexus
 ```
 
@@ -255,7 +255,7 @@ Deploy on any Linux server with Docker installed (DigitalOcean Droplet, AWS EC2,
 
 ```bash
 # On your server
-git clone https://github.com/your-username/f1-nexus.git
+git clone https://github.com/SaadH-077/F1-Nexus.git
 cd f1-nexus
 cp .env.example .env
 nano .env              # Set SMTP credentials and APP_URL to your domain
