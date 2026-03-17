@@ -5,7 +5,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "F1 Nexus API"
     API_V1_STR: str = "/api/v1"
     
-    # SQLite Database
+    # Database — set DATABASE_URL for PostgreSQL (Supabase), falls back to local SQLite
+    DATABASE_URL: str = ""
     SQLITE_URL: str = "sqlite:///./f1nexus.db"
     
     # External API URLs
