@@ -3,9 +3,10 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
-# Install build dependencies (gcc needed for some Python packages)
+# Install build dependencies (gcc + libpq-dev needed for psycopg2)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages into an isolated prefix for a clean copy
@@ -17,6 +18,11 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 FROM python:3.11-slim AS runtime
 
 WORKDIR /app
+
+# Install runtime PostgreSQL client library (needed by psycopg2)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy only the installed packages — no build tools in the production image
 COPY --from=builder /install /usr/local
