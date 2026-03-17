@@ -220,7 +220,8 @@ export async function getNextRace(): Promise<NextRace | null> {
 
 export async function getLastRaceResults(): Promise<{ race: RaceInfo | null; results: RaceResult[] }> {
   try {
-    return await fetchJSON(`${API}/races/last/results`);
+    const data = await fetchJSON<{ race: RaceInfo | null; results: RaceResult[] }>(`${API}/races/last/results`);
+    return { race: data.race ?? null, results: data.results ?? [] };
   } catch {
     return { race: null, results: [] };
   }
