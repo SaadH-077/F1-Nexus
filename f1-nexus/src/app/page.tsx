@@ -98,14 +98,16 @@ export default async function HomePage() {
           tickerItems.push(`NEXT RACE: ${nextRace.raceName.toUpperCase()} · ROUND ${nextRace.round} · ${nextRace.locality.toUpperCase()}`);
         newsArticles.slice(0, 6).forEach((a) => tickerItems.push(a.title.toUpperCase()));
         const items = tickerItems.length > 0 ? tickerItems : ["2026 FORMULA 1 WORLD CHAMPIONSHIP — SEASON UNDERWAY"];
-        const allItems = [...items, ...items];
-        const dur = Math.max(3, items.length * 0.27);
+        const dur = Math.max(20, items.length * 3);
 
         return (
           <div className="relative flex items-center bg-card-dark border border-border-dark rounded-xl overflow-hidden" style={{ height: 44 }}>
             <style>{`
-              @keyframes f1ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-              .f1-ticker { animation: f1ticker ${dur}s linear infinite; }
+              @keyframes f1ticker {
+                from { transform: translateX(-100%); }
+                to   { transform: translateX(100vw); }
+              }
+              .f1-ticker { animation: f1ticker ${dur}s linear infinite; white-space: nowrap; }
               .f1-ticker:hover { animation-play-state: paused; }
             `}</style>
             {/* Label */}
@@ -117,7 +119,7 @@ export default async function HomePage() {
             {/* Scrolling strip */}
             <div className="flex-1 overflow-hidden">
               <div className="f1-ticker flex items-center whitespace-nowrap">
-                {allItems.map((text, i) => (
+                {items.map((text, i) => (
                   <span key={i} className="inline-flex items-center">
                     <span className="text-[11px] font-black uppercase tracking-wide text-white px-5">{text}</span>
                     <span className="text-[8px]" style={{ color: "#e00700" }}>◆</span>

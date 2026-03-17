@@ -79,7 +79,7 @@ const DRIVERS_2026: Driver[] = [
   {
     code: "ANT", name: "Kimi Antonelli", team: "Mercedes", teamId: "mercedes",
     nat: "🇮🇹", natCode: "it", number: 12,
-    ch: 0, wins: 0, poles: 1, podiums: 3, fastLaps: 0, debutYear: 2025,
+    ch: 0, wins: 1, poles: 1, podiums: 3, fastLaps: 1, debutYear: 2025,
     careerTeams: [
       { team: "Mercedes-AMG", years: "2025–present" },
     ],
