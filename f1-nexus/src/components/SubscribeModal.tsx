@@ -28,7 +28,7 @@ export default function SubscribeModal({ open, onClose }: Props) {
     setStatus("loading");
     try {
       const res = await subscribeEmail(name.trim(), email.trim());
-      if (res.status === "ok") {
+      if (res.status === "ok" || res.status === "already") {
         setStatus("success");
         setMessage(res.message);
       } else {
