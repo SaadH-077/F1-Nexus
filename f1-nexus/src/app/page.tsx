@@ -14,6 +14,7 @@ import {
   teamLogoUrl,
 } from "@/lib/api";
 import NewsCarousel from "@/components/NewsCarousel";
+import NewsTicker from "@/components/NewsTicker";
 import SubscribeCTA from "@/components/SubscribeCTA";
 import Countdown from "@/components/Countdown";
 import SessionSchedule from "@/components/SessionSchedule";
@@ -98,35 +99,16 @@ export default async function HomePage() {
           tickerItems.push(`NEXT RACE: ${nextRace.raceName.toUpperCase()} · ROUND ${nextRace.round} · ${nextRace.locality.toUpperCase()}`);
         newsArticles.slice(0, 6).forEach((a) => tickerItems.push(a.title.toUpperCase()));
         const items = tickerItems.length > 0 ? tickerItems : ["2026 FORMULA 1 WORLD CHAMPIONSHIP — SEASON UNDERWAY"];
-        const dur = Math.max(20, items.length * 3);
 
         return (
           <div className="relative flex items-center bg-card-dark border border-border-dark rounded-xl overflow-hidden" style={{ height: 44 }}>
-            <style>{`
-              @keyframes f1ticker {
-                from { transform: translateX(-100%); }
-                to   { transform: translateX(100vw); }
-              }
-              .f1-ticker { animation: f1ticker ${dur}s linear infinite; white-space: nowrap; }
-              .f1-ticker:hover { animation-play-state: paused; }
-            `}</style>
             {/* Label */}
             <div className="flex-shrink-0 flex items-center gap-1.5 px-3 h-full z-10" style={{ background: "#e00700" }}>
               <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>campaign</span>
               <span className="text-[8px] font-black uppercase tracking-widest text-white">F1 News</span>
             </div>
             <div className="w-px h-full flex-shrink-0 z-10" style={{ background: "rgba(255,255,255,0.08)" }} />
-            {/* Scrolling strip */}
-            <div className="flex-1 overflow-hidden">
-              <div className="f1-ticker flex items-center whitespace-nowrap">
-                {items.map((text, i) => (
-                  <span key={i} className="inline-flex items-center">
-                    <span className="text-[11px] font-black uppercase tracking-wide text-white px-5">{text}</span>
-                    <span className="text-[8px]" style={{ color: "#e00700" }}>◆</span>
-                  </span>
-                ))}
-              </div>
-            </div>
+            <NewsTicker items={items} />
           </div>
         );
       })()}
