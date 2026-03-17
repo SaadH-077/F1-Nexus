@@ -20,7 +20,7 @@ from email.mime.text import MIMEText
 from datetime import datetime, timezone
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 
@@ -281,7 +281,7 @@ async def check_and_send_reminders():
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
 @router.post("")
-async def subscribe(req: SubscribeRequest):
+async def subscribe(req: SubscribeRequest, bg: BackgroundTasks):
     """Add a new subscriber and send a welcome email."""
     name = req.name.strip()
     email = req.email.strip().lower()
@@ -293,28 +293,27 @@ async def subscribe(req: SubscribeRequest):
     try:
         existing = db.query(Subscriber).filter(Subscriber.email == email).first()
         if existing:
-            return {"status": "ok", "message": "Already subscribed"}
+            return {"status": "already", "message": f"{email} is already subscribed. You'll receive reminders before every session."}
         db.add(Subscriber(name=name, email=email))
         db.commit()
         print(f"[Subscribers] New: {name} <{email}>")
 
-        # Send welcome email (non-blocking)
-        asyncio.create_task(_send_email(
-            email, name,
-            "Welcome to F1 Nexus — Race Reminders Active 🏁",
+        bg.add_task(
+            _send_email_sync, email, name,
+            "Welcome to F1 Nexus — Race Reminders Active",
             _build_welcome_html(name, email)
-        ))
+        )
 
-        return {"status": "ok", "message": f"Subscribed! Check {email} for your welcome email."}
+        return {"status": "ok", "message": f"Subscribed! A welcome email is on its way to {email}."}
     except IntegrityError:
         db.rollback()
-        return {"status": "ok", "message": "Already subscribed"}
+        return {"status": "already", "message": f"{email} is already subscribed."}
     finally:
         db.close()
 
 
 @router.get("/unsubscribe")
-async def unsubscribe(token: str):
+async def unsubscribe(token: str, bg: BackgroundTasks):
     """Remove a subscriber by token (base64-encoded email) and send confirmation."""
     try:
         email = _decode_token(token)
@@ -331,12 +330,11 @@ async def unsubscribe(token: str):
         db.commit()
         print(f"[Subscribers] Unsubscribed: {name} <{email}>")
 
-        # Send goodbye email (non-blocking)
-        asyncio.create_task(_send_email(
-            email, name,
+        bg.add_task(
+            _send_email_sync, email, name,
             "You've been unsubscribed from F1 Nexus",
             _build_unsubscribe_html(name)
-        ))
+        )
 
         return {"status": "ok", "message": f"{email} has been unsubscribed."}
     finally:
