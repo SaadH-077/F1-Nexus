@@ -22,12 +22,10 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "llama3.2"
     USE_OLLAMA: bool = True
 
-    # SMTP — set these in a .env file or deployment environment variables
-    SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_USER: str = ""          # your Gmail / SMTP address
-    SMTP_PASS: str = ""          # Gmail App Password (not your login password)
-    SMTP_FROM_NAME: str = "F1 Nexus"
+    # Resend — set RESEND_API_KEY in deployment environment variables
+    # RESEND_FROM_EMAIL must use a verified domain (or onboarding@resend.dev for dev/testing)
+    RESEND_API_KEY: str = ""
+    RESEND_FROM_EMAIL: str = "F1 Nexus <onboarding@resend.dev>"
 
     # Public URL shown in reminder emails (override in production)
     APP_URL: str = "http://localhost:3000"

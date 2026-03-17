@@ -11,12 +11,8 @@ Configure with environment variables (or a .env file):
   APP_URL         public URL shown in emails (default: http://localhost:3000)
 """
 
-import smtplib
-import ssl
 import asyncio
 import base64
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from datetime import datetime, timezone
 
 import httpx
@@ -178,34 +174,32 @@ def _build_reminder_html(name: str, session_label: str, race_name: str, minutes:
     return _email_wrapper("Analytics Platform", body, footer)
 
 
-# ─── SMTP sender ──────────────────────────────────────────────────────────────
+# ─── Resend sender ────────────────────────────────────────────────────────────
 
 def _send_email_sync(to_email: str, to_name: str, subject: str, html_body: str) -> bool:
-    host = settings.SMTP_HOST
-    port = settings.SMTP_PORT
-    user = settings.SMTP_USER
-    password = settings.SMTP_PASS
-    from_name = settings.SMTP_FROM_NAME
-
-    if not user or not password:
-        print(f"[Email] SMTP not configured – skipping email to {to_email}")
+    api_key = settings.RESEND_API_KEY
+    if not api_key:
+        print(f"[Email] Resend not configured – skipping email to {to_email}")
         return False
 
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = f"{from_name} <{user}>"
-    msg["To"] = f"{to_name} <{to_email}>"
-    msg.attach(MIMEText(html_body, "html"))
-
     try:
-        ctx = ssl.create_default_context()
-        with smtplib.SMTP(host, port) as server:
-            server.ehlo()
-            server.starttls(context=ctx)
-            server.login(user, password)
-            server.sendmail(user, to_email, msg.as_string())
-        print(f"[Email] Sent '{subject}' to {to_email}")
-        return True
+        resp = httpx.post(
+            "https://api.resend.com/emails",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "from": settings.RESEND_FROM_EMAIL,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_body,
+            },
+            timeout=10.0,
+        )
+        if resp.status_code in (200, 201):
+            print(f"[Email] Sent '{subject}' to {to_email}")
+            return True
+        else:
+            print(f"[Email] Resend error {resp.status_code}: {resp.text}")
+            return False
     except Exception as e:
         print(f"[Email] Failed to send to {to_email}: {e}")
         return False
