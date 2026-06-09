@@ -113,7 +113,14 @@ function ChartCard({
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
+// Telemetry comes from FastF1, whose data currently covers up to the 2025
+// season. The rest of the app runs on the live (2026) season, but telemetry
+// defaults to the latest year with available data so the page works out of
+// the box instead of loading a session FastF1 has no telemetry for.
+const TELEMETRY_YEARS = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018];
+
 export default function TelemetryPage() {
+  const [year, setYear] = useState(TELEMETRY_YEARS[0]);
   const [schedule, setSchedule] = useState<ScheduleRace[]>([]);
   const [drivers, setDrivers] = useState<DriverStanding[]>([]);
   const [raceIdx, setRaceIdx] = useState(0);
@@ -128,23 +135,28 @@ export default function TelemetryPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getSchedule("current").then((s) => {
+    getSchedule(String(year)).then((s) => {
       const now = new Date();
       const past = s.filter((r) => new Date(new Date(r.date).getTime() - 2 * 24 * 60 * 60 * 1000) < now);
       const list = past.length > 0 ? past : s;
       setSchedule(list);
       setRaceIdx(Math.max(0, list.length - 1));
     });
-    getDriverStandings("current").then(setDrivers);
-  }, []);
+    getDriverStandings(String(year)).then(setDrivers);
+  }, [year]);
 
-  // Auto-load when race/session changes
+  // Auto-load when the selected session changes. Keyed on the actual target
+  // (year + round + session + lap) so switching season always reloads, even
+  // if the race index happens to be the same number in both years.
+  const loadKey = schedule[raceIdx]
+    ? `${year}-${schedule[raceIdx].round}-${session}-${targetLap}`
+    : "";
   useEffect(() => {
     if (schedule.length > 0 && selectedDrivers.length > 0) {
       loadTelemetry();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [raceIdx, session, targetLap]);
+  }, [loadKey]);
 
   async function loadTelemetry(lap?: string) {
     if (!schedule[raceIdx] || selectedDrivers.length === 0) return;
@@ -304,6 +316,24 @@ export default function TelemetryPage() {
         <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Race + Session selectors */}
           <div className="space-y-4">
+            <div>
+              <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-2">
+                Season
+              </label>
+              <select
+                className="w-full bg-background-dark border border-border-dark rounded-xl text-sm py-2.5 px-3 text-slate-100 font-bold outline-none focus:border-primary/50 cursor-pointer"
+                value={year}
+                onChange={(e) => { setAvailableLaps([]); setTargetLap(""); setRaceIdx(0); setYear(Number(e.target.value)); }}
+              >
+                {TELEMETRY_YEARS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <p className="text-[9px] text-slate-500 mt-1.5 leading-tight">
+                Telemetry data available up to 2025
+              </p>
+            </div>
+
             <div>
               <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 block mb-2">
                 Race Event

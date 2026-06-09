@@ -202,7 +202,19 @@ class FastF1Service:
                 return final_result
 
             except Exception as e:
-                err = {"error": str(e)}
+                msg = str(e)
+                # FastF1 raises opaque pandas/key errors when a session has no
+                # telemetry available (common for very recent seasons not yet in
+                # FastF1's data source). Surface a clear, actionable message.
+                low = msg.lower()
+                if "date" in low or "columns" in low or "not been loaded" in low or "failed to load" in low or "no data" in low:
+                    friendly = (
+                        f"Telemetry isn't available for {race} {year} ({session_type}) yet. "
+                        f"FastF1 telemetry currently covers seasons up to 2025 — try an earlier year."
+                    )
+                else:
+                    friendly = msg
+                err = {"error": friendly}
                 self._cache_put(cache_key, err)
                 return err
 
