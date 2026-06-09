@@ -1,5 +1,5 @@
 import random
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 class StrategyEngine:
     """
@@ -17,9 +17,13 @@ class StrategyEngine:
     
     PIT_LOSS = 22.0 # average pit stop loss in seconds
     
-    def simulate_strategy(self, driver: str, track: str, starting_compound: str, target_stops: int, total_laps: int = 60) -> Dict[str, Any]:
+    def simulate_strategy(self, driver: str, track: str, starting_compound: str, target_stops: int, total_laps: int = 60, driver_rank: Optional[int] = None) -> Dict[str, Any]:
         """
         Runs a Monte Carlo simulation for a specific strategy.
+
+        driver_rank is the driver's current championship position (1 = leader),
+        passed in from the route so the predicted finish tracks real season form
+        rather than a hardcoded list of favourites.
         """
         num_simulations = 1000
         total_times = []
@@ -43,7 +47,7 @@ class StrategyEngine:
             "driver": driver,
             "track": track,
             "stints": timeline,
-            "predicted_finish": random.randint(1, 3) if driver in ["VER", "NOR", "LEC"] else random.randint(4, 10),
+            "predicted_finish": self._predict_finish(driver_rank),
             "total_time_seconds": avg_time,
             "total_time_formatted": self._format_time(avg_time),
             "chart_data": delta_to_leader,
@@ -51,6 +55,18 @@ class StrategyEngine:
             "confidence": f"{random.randint(85, 95)}%"
         }
         
+    def _predict_finish(self, driver_rank: Optional[int]) -> int:
+        """
+        Estimate a finishing position centred on the driver's championship rank,
+        with a little race-day randomness. Falls back to a neutral midfield
+        spread when the rank is unknown.
+        """
+        if not driver_rank or driver_rank < 1:
+            return random.randint(4, 10)
+        low = max(1, driver_rank - 2)
+        high = min(20, driver_rank + 3)
+        return random.randint(low, high)
+
     def _run_single_sim(self, stints: List[Dict[str, Any]], total_laps: int) -> float:
         """Run one iteration of the race"""
         base_lap_time = 85.0 # seconds
