@@ -13,6 +13,7 @@ Configure with environment variables (or a .env file):
 
 import asyncio
 import base64
+import os
 from datetime import datetime, timezone
 
 import httpx
@@ -231,9 +232,13 @@ async def check_and_send_reminders():
     subscribers = _get_all_subscribers()
     if not subscribers:
         return
+    # Call our own /races/next endpoint. Bind to the same port the server is
+    # listening on — Render/Heroku inject $PORT (often not 8000), so a hardcoded
+    # port would make this self-request fail and silently kill reminders.
+    port = os.environ.get("PORT", "8000")
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
-            resp = await client.get("http://localhost:8000/api/v1/races/next")
+            resp = await client.get(f"http://127.0.0.1:{port}/api/v1/races/next")
             if resp.status_code != 200:
                 return
             data = resp.json()

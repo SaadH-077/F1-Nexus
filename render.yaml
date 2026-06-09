@@ -1,0 +1,52 @@
+# Render Blueprint — F1 Nexus backend (FastAPI) + Postgres
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deploy:
+#   1. Push this repo to GitHub.
+#   2. Render Dashboard → New → Blueprint → pick this repo.
+#   3. Render reads this file, provisions the database + web service.
+#   4. Fill in the secret env vars marked `sync: false` (RESEND_API_KEY).
+#
+# The web service builds from backend/Dockerfile, which already binds to
+# Render's injected $PORT via its shell-form CMD.
+
+databases:
+  - name: f1nexus-db
+    plan: free            # Render's free Postgres (expires ~30 days; upgrade to keep)
+    databaseName: f1nexus
+    user: f1nexus
+
+services:
+  - type: web
+    name: f1nexus-api
+    runtime: docker
+    plan: free            # free web service (spins down after 15 min idle, cold-starts on next hit)
+    region: oregon        # change to frankfurt/singapore if closer to you
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Postgres connection string, injected automatically from the DB above.
+      # database.py normalises the scheme and uses it instead of SQLite.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: f1nexus-db
+          property: connectionString
+
+      # AI Analyst falls back to its built-in rule-based writer when Ollama is
+      # off. Render has no Ollama server, so disable it to skip wasted retries.
+      - key: USE_OLLAMA
+        value: "false"
+
+      # Email reminders via Resend. Create a key at https://resend.com/api-keys
+      # and paste it into the Render dashboard (kept out of git via sync:false).
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        value: "F1 Nexus <onboarding@resend.dev>"
+
+      # Public frontend URL — used in email CTA links. Update if your Vercel
+      # domain changes.
+      - key: APP_URL
+        value: "https://f1-nexus-wheat.vercel.app"

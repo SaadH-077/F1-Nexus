@@ -18,6 +18,7 @@ f1-nexus/node_modules/
 f1-nexus/.next/
 f1-nexus/out/
 f1-nexus/.env*
+!f1-nexus/.env.example
 f1-nexus/*.tsbuildinfo
 f1-nexus/next-env.d.ts
 

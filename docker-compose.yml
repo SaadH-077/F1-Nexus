@@ -38,12 +38,11 @@ services:
     environment:
       - OLLAMA_HOST=http://ollama:11434
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.2}
-      # SMTP — set in .env file
-      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
-      - SMTP_PORT=${SMTP_PORT:-587}
-      - SMTP_USER=${SMTP_USER:-}
-      - SMTP_PASS=${SMTP_PASS:-}
-      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-F1 Nexus}
+      # Optional Postgres — leave unset to use the bundled SQLite volume
+      - DATABASE_URL=${DATABASE_URL:-}
+      # Email reminders (Resend) — set in .env file
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - RESEND_FROM_EMAIL=${RESEND_FROM_EMAIL:-F1 Nexus <onboarding@resend.dev>}
       - APP_URL=${APP_URL:-http://localhost:3000}
     depends_on:
       ollama:
